@@ -1,0 +1,585 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter&family=Titillium+Web&display=swap");
+
+* {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: auto;
+    max-width: 450px;
+    min-width: 380px;
+}
+
+.single_container {
+    margin: 3px auto;
+    width: 90%;
+    margin-top: 11px;
+}
+
+.he {
+    height: 200px;
+}
+
+/* MAIN_CONTAINER //////////////////////////////////////////////////////////////////////////////////////*/
+
+.mybank_info_contanier {
+    color: white;
+    text-align: center;
+    font-size: 3vw;
+    border-radius: 22px;
+    background-color: #0185FF;
+    display: flex;
+    flex-direction: column;
+    max-height: 300vh;
+}
+
+.mybank_info_header {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    background-color: #001E58;
+    margin-bottom: 20px;
+    border-radius: 22px 22px 0 0;
+}
+
+.mybank_info_icon {
+    margin-top: 5px;
+    margin-right: 10px;
+    margin-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.icon {
+    height: 30px;
+    width: 30px;
+}
+
+.mybank_info_text {
+    margin-right: 80px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.info_text_on_the_nft {
+    margin-left: 10px;
+    align-items: center;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.mybank_balance_block,
+.mybank_affilate_balance_block {
+    background-color: #309CFF;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    width: 250px;
+    text-align: center;
+    color: white;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+.mybank_balance_block .title,
+.mybank_affilate_balance_block .title {
+    font-size: 14px;
+    color: black;
+    margin-bottom: 10px;
+}
+
+.mybank_balance_block .amount,
+.mybank_affilate_balance_block .amount {
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 11px;
+}
+
+.mybank_balance_block .amount img,
+.mybank_affilate_balance_block .amount img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.mybank_withdraw_button {
+    background: linear-gradient(90deg, #FFA800 0%, #FAFF00 24%, #FFD600 53%, #FFA800 100%);
+    border: none;
+    border-radius: 25px;
+    padding: 13px 20px;
+    color: black;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    margin: auto;
+    margin-bottom: 10px;
+}
+
+.mybank_withdraw_button img {
+    width: 16px;
+    height: 16px;
+    margin-left: 10px;
+}
+
+/* FOOTER //////////////////////////////////////////////////////////////////////////////////////*/
+
+.main_footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 150px;
+    background-image: url('../../../assets/images/main_footer.png');
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: cover;
+    display: flex;
+    max-width: 450px;
+    justify-content: center;
+    margin: 0px auto;
+}
+
+.main_footer_balance {
+    margin: 80px auto 20px;
+    background-color: black;
+    border-radius: 15px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    max-width: 100px;
+}
+
+.main_footer_balance .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.main_footer_balance .text {
+    line-height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.main_footer_container {
+    display: flex;
+    justify-content: center;
+    margin-top: 65px;
+}
+
+.main_footer_icon_box {
+    background-color: #4D270D;
+    border-radius: 10px;
+    width: 65px;
+    height: 65px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5px;
+    color: white;
+    text-align: center;
+}
+
+.main_footer_icon_box .icon {
+    width: 20px;
+    height: 20px;
+}
+
+.main_footer_icon_box_bank {
+    background-color: #361c0a;
+    border-radius: 10px;
+    width: 65px;
+    height: 65px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5px;
+    color: white;
+    text-align: center;
+}
+
+.main_footer_icon_box .icon_bank {
+    width: 20px;
+    height: 20px;
+}
+
+.main_footer_icon_text {
+    font-size: 10px;
+    margin-top: 5px;
+}
+
+.chart-container {
+    position: relative;
+    height: 60vh;
+    max-width: 300px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  canvas {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.7);
+    max-height: 300px;
+    min-width: 250px;
+    max-width: 300px;
+    margin: 3px, auto;
+    
+  }
+
+  .time-range-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    max-width: 400px;
+  }
+  
+  .time-range-btn {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 3px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.7);
+  }
+  
+  .time-range-btn:hover {
+    background-color: #0b7dda;
+  }
+
+/* MODAL_WINDOW //////////////////////////////////////////////////////////////////////////////////////*/
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9;
+    display: none;
+}
+
+
+.modal-content {
+    display: none; 
+    position: fixed; 
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #000080, #1E90FF); /* Градиент от темно-синего к ярко-синему */
+    padding: 30px;
+    width: 270px;
+    text-align: center;
+    border-radius: 25px;
+    box-shadow: 
+        0 0 30px rgba(255, 215, 0, 0.7), /* Внешнее золотое свечение */
+        0 0 60px rgba(30, 144, 255, 0.5), /* Синее свечение */
+        inset 0 0 20px rgba(255, 255, 255, 0.2); /* Внутреннее свечение */
+    z-index: 1000; 
+    animation: pulse 2s infinite alternate; /* Пульсирующая анимация */
+    backdrop-filter: blur(5px); /* Эффект размытия фона */
+    color: #FFFFFF; /* Белый текст */
+    font-family: 'Arial', sans-serif;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.modal-content:hover {
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 
+        0 0 40px rgba(255, 215, 0, 0.8),
+        0 0 80px rgba(30, 144, 255, 0.6),
+        inset 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 
+            0 0 30px rgba(255, 215, 0, 0.7),
+            0 0 60px rgba(30, 144, 255, 0.5),
+            inset 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+    100% {
+        box-shadow: 
+            0 0 50px rgba(255, 215, 0, 0.9),
+            0 0 80px rgba(30, 144, 255, 0.7),
+            inset 0 0 40px rgba(255, 255, 255, 0.4);
+    }
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+}
+
+.close {
+    position: fixed;
+    top: 0px;
+    right: 15px;
+    font-size: 48px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.close:hover,
+.close:focus {
+    color: #0dff00;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+h2 {
+    margin-top: 0;
+    margin-left: 0;
+    font-size: 22px; /* Increased font size */
+    color: #fff;
+    text-align: center; /* Centered the text */
+    font-weight: bold; /* Made it bold */
+    text-transform: uppercase; /* Made it uppercase for SONIC style */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Added shadow for SONIC style */
+}
+
+.balance-box {
+    animation: none; /* Removed spinning animation */
+    background: linear-gradient(45deg, #001E58, #0a4ba8); /* Added gradient for SONIC style */
+    border-radius: 10px;
+}
+
+.balance-box::before {
+    content: none;
+}
+
+.balance-label {
+    font-size: 16px; /* Increased font size */
+    color: #ffffff; /* Changed color to white for better visibility */
+    text-align: center; /* Centered the text */
+    font-weight: bold; /* Made it bold */
+    margin-bottom: 10px;
+    padding-top: 10px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Added shadow for SONIC style */
+}
+
+.balance-amount {
+    font-size: 32px; /* Increased font size */
+    font-weight: bold;
+    color: #f0b90b;
+    text-align: center; /* Centered the text */
+    text-shadow: 0 0 10px rgba(240, 185, 11, 0.7);
+    animation: sonic-pulse 1.5s ease-in-out infinite alternate; /* Added SONIC-style pulsing */
+}
+
+@keyframes sonic-pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+}
+
+.balance-box::after {
+    content: none;
+}
+
+.input-group {
+    margin-bottom: 20px; /* Increased margin for better spacing */
+    position: relative;
+    overflow: hidden;
+}
+
+label {
+    display: block;
+    font-size: 16px; /* Increased font size */
+    color: #ffffff; /* Changed color to white for better visibility */
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    text-align: center; /* Centered the text */
+    font-weight: bold; /* Made it bold */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Added shadow for SONIC style */
+}
+
+input {
+    width: 90%; /* Changed to 100% as we removed the dropdown */
+    background-color: #001E58;
+    border: 2px solid #3d4552;
+    border-radius: 10px;
+    padding: 12px;
+    color: #fff;
+    font-size: 18px; /* Increased font size */
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    border-color: #f0b90b;
+    box-shadow: 0 0 10px rgba(240, 185, 11, 0.3);
+    outline: none;
+}
+
+.available {
+    font-size: 16px; /* Increased font size */
+    color: #ffffff; /* Changed color to white for better visibility */
+    margin-bottom: 15px;
+    text-align: center; /* Centered the text */
+}
+
+.balance-info {
+    background-color: #001E58;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(240, 185, 11, 0.3);
+    transition: all 0.3s ease;
+}
+
+.balance-info:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(240, 185, 11, 0.5);
+}
+
+.btc-amount {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    color: #f0b90b;
+    text-shadow: 0 0 10px rgba(240, 185, 11, 0.5);
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.sonic-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background: linear-gradient(45deg, #0a4ba8, #0a8bf4);
+    border: none;
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.sonic-button:hover {
+    background: linear-gradient(45deg, #0a8bf4, #0a4ba8);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sonic-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.submit-button {
+    background: linear-gradient(45deg, #f0b90b, #fbda61);
+    color: #001E58;
+    text-shadow: none;
+}
+
+.submit-button:hover {
+    background: linear-gradient(45deg, #fbda61, #f0b90b);
+}
+
+/* MEDIA_QUERY //////////////////////////////////////////////////////////////////////////////////////////*/
+
+@media (max-width: 768px) {
+    input, select {
+        font-size: 14px;
+    }
+    
+    h2 {
+        font-size: 20px;
+    }
+    
+    .btc-amount {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 420px) {
+    .mybank_info_header {
+        font-size: 12px;
+    }
+
+    .info_balance .icon {
+        width: 15px;
+        height: 15px;
+    }
+}
+
+@media (max-width: 380px) {
+    .mybank_info_header {
+        font-size: 10px;
+    }
+
+    .info_balance .icon {
+        width: 13px;
+        height: 13px;
+    }
+}
+
+@media (max-width: 370px) {
+    .mybank_info_header {
+        font-size: 9px;
+    }
+
+    .info_balance .icon {
+        width: 11px;
+        height: 11px;
+    }
+}
+
+@media (max-width: 360px) {
+    .mybank_info_header {
+        font-size: 7px;
+    }
+
+    .info_balance .icon {
+        width: 10px;
+        height: 10px;
+    }
+}

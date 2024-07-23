@@ -1,0 +1,341 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter&family=Titillium+Web&display=swap");
+
+* {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overflow-x: auto;
+    max-width: 450px;
+    min-width: 380px;
+}
+
+.single_container {
+    margin: 3px auto;
+    width: 90%;
+    margin-top: 11px;
+
+}
+
+/* MAIN_CONTAINER //////////////////////////////////////////////////////////////////////////////////////*/
+
+.team_info_contanier {
+    color: white;
+    text-align: center;
+    font-size: 3vw;
+    border-radius: 22px;
+    background-color: #0185FF;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 300vh;
+}
+
+.team_info_header {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    background-color: #001E58;
+    margin-bottom: 20px;
+    border-radius: 22px 22px 0 0;
+}
+
+.team_info_icon {
+    margin-top: 5px;
+    margin-right: 10px;
+    margin-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.icon {
+    height: 30px;
+    width: 30px;
+}
+
+.team_info_text {
+    margin-right: 73px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.info_text_on_the_total {
+    margin-left: 10px;
+    align-items: center;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.team_tatal_members {
+    background-color: #309CFF;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    width: 250px;
+    text-align: center;
+    color: white;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+.team_tatal_members .title {
+    font-size: 14px;
+    color: black;
+    margin-bottom: 10px;
+}
+
+.team_tatal_members .amount {
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.team_tatal_members .amount img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.memberes {
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.team_info_header_center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 15px;
+    background-color: #001E58;
+    margin-bottom: 20px;
+}
+
+.team_info_header_center .statistics {
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-family: Arial, sans-serif;
+    margin-top: 20px;
+}
+
+.info_balance_center {
+    background-color: #023393;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    width: 250px;
+    text-align: center;
+    color: white;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+.info_balance_center .title {
+    font-size: 14px;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.info_balance_center .amount {
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.info_balance_center .amount img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.team_week_all {
+    background-color: #309CFF;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    width: 250px;
+    text-align: center;
+    color: white;
+    margin: auto;
+    margin-bottom: 230px;
+}
+
+.team_week_all .title {
+    font-size: 14px;
+    color: black;
+    margin-bottom: 10px;
+}
+
+.team_week_all_last_text {
+    align-items: center;
+    font-size: 12px;
+    margin-left: 35px;
+    margin-right: 35px;
+}
+
+.team_week_all img {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+}
+
+/* FOOTER //////////////////////////////////////////////////////////////////////////////////////////*/
+.main_footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 150px;
+    background-image: url('../../../assets/images/main_footer.png');
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    max-width: 450px;
+    justify-content: center;
+    margin: 0px auto;
+}
+
+.main_footer_balance {
+    margin: 80px auto 20px;
+    background-color: black;
+    border-radius: 15px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    max-width: 100px;
+}
+
+.main_footer_balance .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.main_footer_balance .text {
+    line-height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.main_footer_container {
+    display: flex;
+    justify-content: center;
+    margin-top: 65px;
+}
+
+.main_footer_icon_box {
+    background-color: #4D270D;
+    border-radius: 10px;
+    width: 65px;
+    height: 65px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5px;
+    color: white;
+    text-align: center;
+}
+
+.main_footer_icon_box .icon {
+    width: 20px;
+    height: 20px;
+}
+
+.main_footer_icon_box_team {
+    background-color: #361c0a;
+    border-radius: 10px;
+    width: 65px;
+    height: 65px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5px;
+    color: white;
+    text-align: center;
+}
+
+.main_footer_icon_box .icon_team {
+    width: 20px;
+    height: 20px;
+}
+
+.main_footer_icon_text {
+    font-size: 10px;
+    margin-top: 5px;
+}
+
+/* MEDIA_QUERY //////////////////////////////////////////////////////////////////////////////////////////*/
+
+@media (max-width: 420px) {
+    .team_info_header {
+        font-size: 12px;
+    }
+
+    .center-div0 .icon {
+        width: 15px;
+        height: 15px;
+    }
+}
+
+@media (max-width: 380px) {
+    .team_info_header {
+        font-size: 10px;
+    }
+
+    .info_balance .icon {
+        width: 13px;
+        height: 13px;
+    }
+}
+
+@media (max-width: 370px) {
+    .team_info_header {
+        font-size: 9px;
+    }
+
+    .info_balance .icon {
+        width: 11px;
+        height: 11px;
+    }
+}
+
+@media (max-width: 360px) {
+    .team_info_header {
+        font-size: 7px;
+    }
+
+    .info_balance .icon {
+        width: 10px;
+        height: 10px;
+    }
+}

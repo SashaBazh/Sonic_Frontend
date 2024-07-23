@@ -1,0 +1,173 @@
+<body>
+    <div class="single_container">
+        <div class="home_header_container">
+            <a href="#" class="home_button home_button_referral" (click)="openModal($event)">
+                Referral link
+                <img src="../../../assets/images/icons/home_referral.png" alt="copy icon" width="16">
+            </a>
+            <a href="#" class="home_button home_button_upgrade" [routerLink]="['/buynft']" routerLinkActive="active">
+                Upgrade
+                <img src="../../../assets/images/icons/home_upgrade.png" alt="upgrade icon" width="16">
+            </a>
+        </div>
+        <div class="footer-container">
+            <div class="main_footer_play" (click)="onPlayClick($event)">
+                <span class="text">Play</span>
+            </div>
+            <div class="main_footer_balance">
+                <img src="../../../assets/images/icons/mybank_coin.png" alt="Icon" class="icon">
+                <span class="text">{{ balance | number:'1.2-2' }}</span>
+            </div>
+            <div class="main_footer_buy_btc" (click)="openNewModal($event)">
+                <span class="text">$ Buy Bitcoin</span>
+            </div>
+        </div>
+        <div class="home_energy_bar_container">
+            <div class="home_energy_bar_background"></div>
+            <div class="home_energy_bar_progress" [style.width.%]="energyPercentage"></div>
+            <div class="home_energy_bar_content">
+                <div class="home_energy_bar_text">Taps left:</div>
+                <div class="home_energy_bar_value">
+                    <img src="../../../assets/images/icons/home_light.png" alt="иконка энергии" width="16">
+                    {{ energy }} / {{ maxTaps }}
+                </div>
+            </div>
+        </div>
+        <div class="home_clicker_container">
+            <div class="home_autoclicker_container">
+                <div class="autoclicker_left">
+                    <label class="home_toggle_switch" [class.disabled]="!autoClickerAvailable">
+                        <input type="checkbox"
+                               [checked]="autoClickerEnabled"
+                               (click)="toggleAutoClicker($event)">
+                        <span class="home_slider"></span>
+                    </label>
+                </div>
+                <span class="autoclicker_text">Autoclicker</span>
+            </div>
+            <div class="home_leaderboard_container">
+                <img src="../../../assets/images/icons/trophy.png" alt="Leaderboard" class="leaderboard_icon"
+                     (click)="openLeaderboardModal($event)">
+            </div>
+            <div class="home_nft_container" (touchstart)="onTap($event)" (mousedown)="onTap($event)">
+                <div class="home_blur_circle home_blur_circle_1"></div>
+                <div class="home_blur_circle home_blur_circle_2"></div>
+                <img [src]="currentImage" alt="Current Skin" class="nft_image">
+                <div class="number-container">
+                    <div class="number-container">
+                        <div *ngFor="let item of numbers" [style.left.px]="item.x" [style.top.px]="item.y"
+                            class="number-display">
+                            <img *ngIf="!item.isNumber" src="../../../assets/images/icons/mybank_coin.png" alt="coin"
+                                width="30">
+                            <span *ngIf="item.isNumber">{{ item.value }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="main_footer">
+        <div class="main_footer_container">
+            <div class="main_footer_icon_box_home">
+                <img src="../../../assets/images/icons/footer_home.png" alt="Icon 1" class="icon_home">
+                <div class="main_footer_icon_text">Home</div>
+            </div>
+            <div class="main_footer_icon_box" [routerLink]="['/mybank']" routerLinkActive="active">
+                <img src="../../../assets/images/icons/footer_my_bank.png" alt="Icon 2" class="icon">
+                <div class="main_footer_icon_text">My bank</div>
+            </div>
+            <div class="main_footer_icon_box" [routerLink]="['/team']" routerLinkActive="active">
+                <img src="../../../assets/images/icons/footer_my_team.png" alt="Icon 3" class="icon">
+                <div class="main_footer_icon_text">My team</div>
+            </div>
+            <div class="main_footer_icon_box" [routerLink]="['/quest']" routerLinkActive="active">
+                <img src="../../../assets/images/icons/footer_quest.png" alt="Icon 5" class="icon">
+                <div class="main_footer_icon_text">Quest</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- /* MODAL_WINDOW_REFERRAL //////////////////////////////////////////////////////////////////////////////////////*/ -->
+
+    <div class="modal-content" #modal>
+        <span class="close" (click)="closeModal()">&times;</span>
+        <div class="qr-code">
+            <img [src]="qrCodeUrl" alt="QR Code" width="200" height="200">
+        </div>
+        <a href="#" class="modal_button modal_button_referral" id="referralButton2" (click)="copyReferralLink()">
+            {{referralLink}}
+            <img src="../../../assets/images/icons/home_referral.png" alt="copy icon" width="16">
+        </a>
+    </div>
+    <div class="overlay" #overlay></div>
+
+    <!-- /* MODAL_WINDOW_BUY_SONIC  //////////////////////////////////////////////////////////////////////////////////////*/ -->
+
+    <div class="new-modal-content" #newModal>
+        <span class="new-close" (click)="closeNewModal()">&times;</span>
+        <p *ngIf="currentTokenPrice !== null">
+            Current Price: {{ currentTokenPrice | number:'1.0-10' }} USD
+        </p>
+        <p *ngIf="currentTokenPrice === null">
+            Unable to fetch current price
+        </p>
+        <h2 class="new-modal-title">Buy in:</h2>
+        <a (click)="openLink('https://coinmarketcap.com/exchanges/uniswap-v2/')"
+            class="new-modal-button new-modal-button-referral">
+            <img src="https://cryptologos.cc/logos/uniswap-uni-logo.png" alt="Uniswap Logo" class="exchange-logo">
+            UNISWAP
+        </a>
+        <a (click)="openLink('https://www.mexc.com/exchange/HARRY_USDT')"
+            class="new-modal-button new-modal-button-referral">
+            <img src="https://i.pinimg.com/736x/12/ce/27/12ce27c82fade533d279ba16655fa61f.jpg" alt="MEXC Logo"
+                class="exchange-logo">
+            MEXC
+        </a>
+        <a (click)="openLink('https://www.lbank.com/trade/bitcoin_usdt')"
+            class="new-modal-button new-modal-button-referral">
+            <img src="https://cdn.worldvectorlogo.com/logos/lbank-2.svg" alt="LBank Logo" class="exchange-logo">
+            LBANK
+        </a>
+    </div>
+    <div class="new-overlay" #newOverlay></div>
+
+    <!-- /* MODAL_WINDOW_LEADERBOARD //////////////////////////////////////////////////////////////////////////////////////*/ -->
+
+    <div class="leaderboard-modal-content" #leaderboardModal>
+        <span class="close" (click)="closeLeaderboard()">&times;</span>
+        <a class="title">Leaderboard</a>
+        <div class="leaderboard_tabs">
+            <button (click)="setLeaderboardType('spentNFT')" [class.active]="leaderboardType === 'spentNFT'">NFT
+                Donations</button>
+            <button (click)="setLeaderboardType('sonics')" [class.active]="leaderboardType === 'sonics'">In-game
+                Currency</button>
+            <button (click)="setLeaderboardType('referrals')"
+                [class.active]="leaderboardType === 'referrals'">Referrals</button>
+        </div>
+        <div class="leaderboard_podium">
+            <div class="podium_place second">
+                <div class="podium_name">{{leaderboardData[1]?.name}}</div>
+                <div class="podium_score">{{leaderboardData[1]?.score}}</div>
+            </div>
+            <div class="podium_place first">
+                <div class="podium_name">{{leaderboardData[0]?.name}}</div>
+                <div class="podium_score">{{leaderboardData[0]?.score}}</div>
+            </div>
+            <div class="podium_place third">
+                <div class="podium_name">{{leaderboardData[2]?.name}}</div>
+                <div class="podium_score">{{leaderboardData[2]?.score}}</div>
+            </div>
+        </div>
+        <div class="leaderboard_list">
+            <div class="leaderboard_item" *ngFor="let item of leaderboardData.slice(3, 100); let i = index">
+                <div class="leaderboard_rank">{{i + 4}}</div>
+                <div class="leaderboard_name">{{item.name}}</div>
+                <div class="leaderboard_score">{{item.score}}</div>
+            </div>
+        </div>
+        <div class="user_rank" *ngIf="userRank > 100">
+            Your rank: {{userRank}}
+        </div>
+    </div>
+    <div class="leaderboard-overlay" #leaderboardOverlay></div>
+</body>

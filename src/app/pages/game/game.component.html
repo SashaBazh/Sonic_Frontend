@@ -1,0 +1,15 @@
+<div id="game">
+    <div #scoreDisplay id="score">Score: 0</div>
+    <img #sonic id="sonic" src="../../../assets/images/Sonic_game1.png" alt="Sonic">
+    <div #game id="game" [style.backgroundPositionX.px]="backgroundPosition"></div>
+    <div #ground class="ground"></div>
+</div>
+
+<div #gameOverModal id="gameOverModal" class="modal">
+    <div class="modal-content">
+        <h2>Game Over!</h2>
+        <p #finalScoreDisplay id="finalScore"></p>
+        <!-- <button #restartButton id="restartButton">Go Home</button> -->
+        <button id="restartButton" (click)="goHome()">Go Home</button>
+    </div>
+</div>

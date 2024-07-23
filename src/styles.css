@@ -1,1 +1,16 @@
-/* You can add global styles to this file, and also import other style files */
+html {
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  position: relative;
+  background-image: url('assets/images/Back_game.png');
+  background-size: cover;
+  background-repeat: repeat-x;
+  background-repeat: repeat-y;
+  display: flex;
+    justify-content: center;
+}
+
+body {
+  overflow: hidden;
+}

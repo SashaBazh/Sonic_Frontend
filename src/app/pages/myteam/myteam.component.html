@@ -1,0 +1,71 @@
+<body>
+    <div class="single_container">
+        <div class="team_info_contanier">
+            <div class="team_info_header">
+                <div class="team_info_icon">
+                    <img src="../../../assets/images/icons/footer_my_team.png" alt="Icon" class="icon">
+                </div>
+                <div class="team_info_text">
+                    TEAM
+                </div>
+            </div>
+            <div class="info_text_on_the_total">
+                <span class="text">SONIC PROJECT STATISTICS</span>
+            </div>
+            <div class="team_tatal_members">
+                <div class="title">TOTAL USERS IN BOT</div>
+                <div class="memberes">{{ totalMembers }}</div>
+            </div>
+            <div class="team_tatal_members">
+                <div class="title">ADD MEMBERS</div>
+                <div class="memberes">{{ totalReferrals }}</div>
+            </div>
+            <div class="team_info_header_center">
+                <span class="statistics">SONIC PROJECT STATISTICS</span>
+                <div class="info_balance_center">
+                    <div class="title">AFFILATE BALANCE USDT / SONIC</div>
+                    <div class="amount">
+                        <img src="../../../assets/images/icons/mybank_Tcoin.png" alt="coin">
+                        {{ totalreferralBalance }}
+                    </div>
+                    <!-- <button class="team_show_button">
+                        Show team
+                    </button> -->
+                </div>
+            </div>
+            <div class="info_text_on_the_total">
+                <span class="text">SONIC PROJECT STATISTICS</span>
+            </div>
+            <div class="team_week_all">
+                <div class="title">YESTERDAY WEEK ALL</div>
+                <div class="memberes">
+                    <img src="../../../assets/images/icons/mybank_coin.png" alt="coin">
+                    {{ referralEnergy }}
+                </div>
+                <div class="team_week_all_last_text">You get 10% of daily generated coins by no-nft holdersin your
+                    first line </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="main_footer">
+        <div class="main_footer_container">
+            <div class="main_footer_icon_box" [routerLink]="['/home']" routerLinkActive="active">
+                <img src="../../../assets/images/icons/footer_home.png" alt="Icon 1" class="icon">
+                <div class="main_footer_icon_text">Home</div>
+            </div>
+            <div class="main_footer_icon_box" [routerLink]="['/mybank']" routerLinkActive="active">
+                <img src="../../../assets/images/icons/footer_my_bank.png" alt="Icon 2" class="icon">
+                <div class="main_footer_icon_text">My bank</div>
+            </div>
+            <div class="main_footer_icon_box_team">
+                <img src="../../../assets/images/icons/footer_my_team.png" alt="Icon 3" class="icon_team">
+                <div class="main_footer_icon_text">My team</div>
+            </div>
+            <div class="main_footer_icon_box" [routerLink]="['/quest']" routerLinkActive="active">
+                <img src="../../../assets/images/icons/footer_quest.png" alt="Icon 5" class="icon">
+                <div class="main_footer_icon_text">Quest</div>
+            </div>
+        </div>
+    </div>
+</body>

@@ -1,0 +1,108 @@
+<body>
+    <div class="single_container">
+        <div class="mybank_info_contanier">
+            <div class="mybank_info_header">
+                <div class="mybank_info_icon">
+                    <img src="../../../assets/images/icons/footer_my_bank.png" alt="Icon" class="icon">
+                </div>
+                <div class="mybank_info_text">
+                    MY BANK
+                </div>
+            </div>
+            <div class="info_text_on_the_nft">
+                <span class="text">SONIC PROJECT STATISTICS</span>
+            </div>
+            <div class="mybank_balance_block">
+                <div class="title">SONIK BALANCE</div>
+                <div class="amount">
+                    <img src="../../../assets/images/icons/mybank_coin.png" alt="coin">
+                    {{ balance | number:'1.2-2' }}
+                </div>
+            </div>
+            <div class="mybank_affilate_balance_block">
+                <div class="title">AFFILATE BALANCE USDT / SONIC</div>
+                <div class="amount">
+                    <img src="../../../assets/images/icons/mybank_Tcoin.png" alt="coin">
+                    {{ referralBalance | number:'1.2-2' }}
+                </div>
+                <button class="mybank_withdraw_button" (click)="openModal($event)">
+                    Withdraw funds
+                    <img src="../../../assets/images/icons/mybank_line_down.png" alt="arrow">
+                </button>
+            </div>
+            <div class="chart-container">
+                <canvas #chartCanvas></canvas>
+                <div class="time-range-buttons">
+                    <button class="time-range-btn" (click)="changeTimeRange('1')">1D</button>
+                    <button class="time-range-btn" (click)="changeTimeRange('7')">1W</button>
+                    <button class="time-range-btn" (click)="changeTimeRange('30')">1M</button>
+                    <button class="time-range-btn" (click)="changeTimeRange('90')">3M</button>
+                    <button class="time-range-btn" (click)="changeTimeRange('365')">1Y</button>
+                    <!-- <button class="time-range-btn" (click)="changeTimeRange('max')">Max</button> -->
+                </div>
+            </div>
+            <div class="he"></div>
+
+
+
+        </div>
+    </div>
+
+
+
+    <div class="main_footer">
+        <div class="main_footer_container">
+            <div class="main_footer_icon_box" [routerLink]="['/home']" routerLinkActive="active">
+                <img src="../../../assets/images/icons/footer_home.png" alt="Icon 1" class="icon">
+                <div class="main_footer_icon_text">Home</div>
+            </div>
+            <div class="main_footer_icon_box_bank">
+                <img src="../../../assets/images/icons/footer_my_bank.png" alt="Icon 2" class="icon_bank">
+                <div class="main_footer_icon_text">My bank</div>
+            </div>
+            <div class="main_footer_icon_box" [routerLink]="['/team']" routerLinkActive="active">
+                <img src="../../../assets/images/icons/footer_my_team.png" alt="Icon 3" class="icon">
+                <div class="main_footer_icon_text">My team</div>
+            </div>
+            <div class="main_footer_icon_box" [routerLink]="['/quest']" routerLinkActive="active">
+                <img src="../../../assets/images/icons/footer_quest.png" alt="Icon 5" class="icon">
+                <div class="main_footer_icon_text">Quest</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-content" #modal>
+        <span class="close" (click)="closeModal()">&times;</span>
+        <h2>WITHDRAW FUNDS</h2>
+
+        <div class="balance-box">
+            <div class="balance-label">SONIC BALANCE</div>
+            <div class="balance-amount"> {{ referralBalance | number:'1.2-2' }}</div>
+        </div>
+        <button class="sonic-button" (click)="closeKeyboard()">CLOSE KEYBOARD</button>
+        <div class="input-group">
+            <label>PAYMENT SYSTEM</label>
+            <div class="select-wrapper">
+                <input type="text" value="💎 BEP-20" readonly>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>WITHDRAW AMOUNT</label>
+            <input type="number" [(ngModel)]="withdrawAmount" placeholder="0">
+            <span class="withdraw-all" (click)="withdrawAll()">WITHDRAW ALL</span>
+        </div>
+
+        <div class="available">AVAILABLE {{ referralBalance | number:'1.2-2' }} SONIC</div>
+
+        <div class="input-group">
+            <label>WITHDRAW ADDRESS</label>
+            <input type="text" [(ngModel)]="withdrawAddress" (input)="checkAddress()">
+        </div>
+
+        <button *ngIf="isAddressValid" class="sonic-button submit-button" (click)="submitWithdraw()">WITHDRAW</button>
+    </div>
+    <div class="overlay" #overlay></div>
+
+
+</body>

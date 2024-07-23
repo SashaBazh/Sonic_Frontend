@@ -1,0 +1,130 @@
+<body>
+  <!-- <div class="single_container">
+    <div class="quest_info_contanier">
+      <div class="quest_info_header">
+        <img src="../../../assets/images/icons/Shopping_Cart2.png" alt="Quest Icon" class="quest_info_icon">
+        <div class="quest_info_text">QUEST</div>
+      </div>
+      <div class="info_text_on_the_nft">Perform quests to earn rewards!</div>
+      <div class="quest_task_container" *ngFor="let task of tasks">
+        <img src="../../../assets/images/icons/Shopping_Cart2.png" alt="Icon 1" class="icon">
+        <div class="text">{{ task.text }}</div>
+        <img src="../../../assets/images/icons/mybank_coin.png" alt="Icon 2" class="icon">
+        <div class="text">+{{ task.reward }}</div>
+        <div class="task-status" (click)="openTaskModal(task)">
+          <img *ngIf="!task.loading && !task.completed" src="../../../assets/images/icons/Frame 69.png" alt="Icon 3" class="icon">
+          <div *ngIf="task.loading" class="loading-spinner"></div>
+          <img *ngIf="task.completed" src="../../../assets/images/icons/checkmark.png" alt="Completed" class="icon completed">
+        </div>
+      </div>
+      <div class="he"></div>
+    </div>
+  </div>
+    
+
+
+  <div class="modal" *ngIf="selectedTask">
+    <div class="modal-content">
+      <span class="close" (click)="closeTaskModal()">&times;</span>
+      <div class="modal-task-container">
+        <img src="../../../assets/images/icons/Shopping_Cart2.png" alt="Icon 1" class="modal-icon">
+        <div class="modal-text">{{ selectedTask.text }}</div>
+        <img src="../../../assets/images/icons/mybank_coin.png" alt="Icon 2" class="modal-icon">
+        <div class="modal-text">+{{ selectedTask.reward }}</div>
+      </div>
+      <div class="modal-description">{{ selectedTask.description }}</div>
+      <button *ngIf="!selectedTask.completed && !selectedTask.loading" (click)="startTask(selectedTask)" class="modal-button">Start Task</button>
+      <div *ngIf="selectedTask.loading" class="loading-spinner"></div>
+      <div *ngIf="selectedTask.completed" class="completed-text">Task Completed!</div>
+    </div>
+  </div>
+
+    <div class="main_footer">
+        <div class="main_footer_container">
+            <div class="main_footer_icon_box" [routerLink]="['/home']" routerLinkActive="active">
+                <img src="../../../assets/images/icons/footer_home.png" alt="Icon 1" class="icon">
+                <div class="main_footer_icon_text">Home</div>
+            </div>
+            <div class="main_footer_icon_box" [routerLink]="['/mybank']" routerLinkActive="active">
+                <img src="../../../assets/images/icons/footer_my_bank.png" alt="Icon 2" class="icon">
+                <div class="main_footer_icon_text">My bank</div>
+            </div>
+            <div class="main_footer_icon_box" [routerLink]="['/team']" routerLinkActive="active">
+                <img src="../../../assets/images/icons/footer_my_team.png" alt="Icon 3" class="icon">
+                <div class="main_footer_icon_text">My team</div>
+            </div>
+            <div class="main_footer_icon_box_quest">
+                <img src="../../../assets/images/icons/footer_quest.png" alt="Icon 5" class="icon_quest">
+                <div class="main_footer_icon_text">Quest</div>
+            </div>
+        </div>
+    </div> -->
+
+
+
+
+
+
+
+
+
+
+    <div class="single_container">
+      <div class="quest_info_contanier">
+        <div class="quest_info_header">
+          <img src="../../../assets/images/icons/Shopping_Cart2.png" alt="Quest Icon" class="quest_info_icon">
+          <div class="quest_info_text">QUEST</div>
+        </div>
+        <div class="info_text_on_the_nft">Perform quests to earn rewards!</div>
+        <div class="quest_task_container" *ngFor="let task of tasks">
+          <img src="../../../assets/images/icons/Shopping_Cart2.png" alt="Task Icon" class="icon">
+          <div class="text">{{ task.name }}</div>
+          <img src="../../../assets/images/icons/mybank_coin.png" alt="Icon 2" class="icon">
+          <div class="text">+{{ task.award }}</div>
+          <div class="task-status" (click)="openTaskModal(task)">
+            <img *ngIf="!task.loading && !task.completed" src="../../../assets/images/icons/Frame 69.png" alt="Icon 3" class="icon">
+            <div *ngIf="task.loading" class="loading-spinner"></div>
+            <img *ngIf="task.completed" src="../../../assets/images/icons/pngegg.png" alt="Completed" class="icon completed">
+          </div>
+        </div>
+        <div class="he"></div>
+      </div>
+    </div>
+    
+    <div class="modal" *ngIf="selectedTask">
+      <div class="modal-content">
+        <span class="close" (click)="closeTaskModal()">&times;</span>
+        <div class="modal-task-container">
+          <img src="../../../assets/images/icons/Shopping_Cart2.png" alt="Task Icon" class="modal-icon">
+          <div class="modal-text">{{ selectedTask.name }}</div>
+          <img src="../../../assets/images/icons/mybank_coin.png" alt="Icon 2" class="modal-icon">
+          <div class="modal-text">+{{ selectedTask.award }}</div>
+        </div>
+        <div class="modal-description">{{ selectedTask.description }}</div>
+        <button *ngIf="!selectedTask.completed && !selectedTask.loading" (click)="startTask(selectedTask)" class="modal-button">Start Task</button>
+        <div *ngIf="selectedTask.loading" class="loading-spinner"></div>
+        <div *ngIf="selectedTask.completed" class="completed-text">Task Completed!</div>
+      </div>
+    </div>
+
+    <div class="main_footer">
+      <div class="main_footer_container">
+          <div class="main_footer_icon_box" [routerLink]="['/home']" routerLinkActive="active">
+              <img src="../../../assets/images/icons/footer_home.png" alt="Icon 1" class="icon">
+              <div class="main_footer_icon_text">Home</div>
+          </div>
+          <div class="main_footer_icon_box" [routerLink]="['/mybank']" routerLinkActive="active">
+              <img src="../../../assets/images/icons/footer_my_bank.png" alt="Icon 2" class="icon">
+              <div class="main_footer_icon_text">My bank</div>
+          </div>
+          <div class="main_footer_icon_box" [routerLink]="['/team']" routerLinkActive="active">
+              <img src="../../../assets/images/icons/footer_my_team.png" alt="Icon 3" class="icon">
+              <div class="main_footer_icon_text">My team</div>
+          </div>
+          <div class="main_footer_icon_box_quest">
+              <img src="../../../assets/images/icons/footer_quest.png" alt="Icon 5" class="icon_quest">
+              <div class="main_footer_icon_text">Quest</div>
+          </div>
+      </div>
+  </div>
+</body>

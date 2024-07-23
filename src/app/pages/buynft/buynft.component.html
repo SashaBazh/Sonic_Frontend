@@ -1,0 +1,208 @@
+<body>
+    <div class="single_container">
+        <div class="info_contanier">
+            <div class="info_header">
+                <div class="info_icon">
+                    <img src="../../../assets/images/icons/footer_buy_nft.png" alt="Icon" class="icon">
+                </div>
+                <div class="info_text">
+                    NFT
+                </div>
+            </div>
+            <div class="info_text_on_the_nft">
+                <span class="text">MY CURRENT NFT</span>
+            </div>
+            <div *ngIf="isLoadingCurrentNFT" class="loading-spinner"></div>
+            <div *ngIf="!isLoadingCurrentNFT && currentNFT">
+                <div class="nft_my_nft">
+                    <div class="nft_my_section">
+                        <div class="image" [style.background-image]="'url(' + currentNFT.image_uri + ')'"></div>
+                        <div class="info">
+                            <div class="title">{{ currentNFT.name }}</div>
+                            <div class="detail">
+                                <img src="../../../assets/images/icons/nft_my_nft_Lightning.png" alt="Lightning Icon"
+                                    class="icon">
+                                <div>
+                                    TAPS PER DAY:
+                                    <div class="value">{{ currentNFT.max_taps }}</div>
+                                </div>
+                            </div>
+                            <div class="detail">
+                                <img src="../../../assets/images/icons/nft_my_nft_Clock.png" alt="Clock Icon"
+                                    class="icon">
+                                <div>
+                                    TAP EFFICIENCY:
+                                    <div class="value">{{ currentNFT.score_per_tap }} en./tap</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!isLoadingCurrentNFT && !currentNFT">
+                You don't have any NFTs yet.
+            </div>
+            <div class="info_text_on_the_nft">
+                <span class="text">BUY A NEW NFT</span>
+            </div>
+            <div *ngIf="isLoadingNFTs" class="loading-spinner"></div>
+            <div *ngIf="loadError" class="error-message">
+                Failed to load NFTs. Please try again later.
+            </div>
+            <div *ngIf="purchaseSuccess" class="success-message">
+                NFT purchased successfully!
+            </div>
+            <div *ngFor="let nft of nfts" class="nft_Buy_nft">
+                <div class="nft_Buy_nft_section">
+                    <div class="image" [style.background-image]="'url(' + nft.image_uri + ')'"></div>
+                    <div class="info">
+                        <div class="title">{{ nft.name }}</div>
+                        <div class="detail">
+                            <img src="../../../assets/images/icons/nft_my_nft_Lightning.png" alt="Lightning Icon"
+                                class="icon">
+                            <div>
+                                TAPS PER DAY:
+                                <div class="value">{{ nft.max_taps }}</div>
+                            </div>
+                        </div>
+                        <div class="detail">
+                            <img src="../../../assets/images/icons/nft_my_nft_Clock.png" alt="Clock Icon" class="icon">
+                            <div>
+                                TAP EFFICIENCY:
+                                <div class="value">{{ nft.score_per_tap }} en./tap</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-container">
+                    <button class="nft_gradient_button buy-usd" (click)="openModal(nft, 'usd')">
+                        Buy for {{ nft.price }} BITCOIN
+                    </button>
+                    <button class="nft_gradient_button buy-star" (click)="openModal(nft, 'star')">
+                        Buy for <img src="../../../assets/images/icons/star.png" alt="Star" class="star-icon">
+                    </button>
+                </div>
+            </div>
+            <div class="he"></div>
+        </div>
+
+        <div class="main_footer">
+            <div class="main_footer_container">
+                <div class="main_footer_icon_box" [routerLink]="['/home']" routerLinkActive="active">
+                    <img src="../../../assets/images/icons/footer_home.png" alt="Icon 1" class="icon">
+                    <div class="main_footer_icon_text">Home</div>
+                </div>
+                <div class="main_footer_icon_box" [routerLink]="['/mybank']" routerLinkActive="active">
+                    <img src="../../../assets/images/icons/footer_my_bank.png" alt="Icon 2" class="icon">
+                    <div class="main_footer_icon_text">My bank</div>
+                </div>
+                <div class="main_footer_icon_box" [routerLink]="['/team']" routerLinkActive="active">
+                    <img src="../../../assets/images/icons/footer_my_team.png" alt="Icon 3" class="icon">
+                    <div class="main_footer_icon_text">My team</div>
+                </div>
+                <div class="main_footer_icon_box" [routerLink]="['/quest']" routerLinkActive="active">
+                    <img src="../../../assets/images/icons/footer_quest.png" alt="Icon 5" class="icon">
+                    <div class="main_footer_icon_text">Quest</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-content" #modal>
+            <span class="close" (click)="closeModal()">&times;</span>
+            <h2>BUY MEMBERSHIP NFT</h2>
+            <div class="nft_Buy_nft" *ngIf="selectedNFT">
+                <div class="nft_Buy_nft_section">
+                    <div class="image2" [style.background-image]="'url(' + selectedNFT.image_uri + ')'"></div>
+                    <div class="info">
+                        <div class="title">{{ selectedNFT.name }}</div>
+                        <div class="detail">
+                            <img src="../../../assets/images/icons/nft_my_nft_Lightning.png" alt="Lightning Icon"
+                                class="icon">
+                            <div>
+                                TAPS PER DAY:
+                                <div class="value">{{ selectedNFT.max_taps }}</div>
+                            </div>
+                        </div>
+                        <div class="detail">
+                            <img src="../../../assets/images/icons/nft_my_nft_Clock.png" alt="Clock Icon" class="icon">
+                            <div>
+                                TAP EFFICIENCY:
+                                <div class="value">{{ selectedNFT.score_per_tap }} en./tap</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="referral-info" *ngIf="!isSelectOpen">
+                    <h3>Referral Rewards</h3>
+                    <div class="referral-level">
+                        <span>Level 1: {{ (selectedNFT.real_money_1_level * 100).toFixed(0) }}% of referral purchase</span>
+                      </div>
+                      <div class="referral-level">
+                        <span>Level 2: {{ (selectedNFT.real_money_2_level * 100).toFixed(0) }}% of referral purchase</span>
+                      </div>
+                      <div class="referral-level">
+                        <span>Level 3: {{ (selectedNFT.real_money_3_level * 100).toFixed(0) }}% of referral purchase</span>
+                      </div>
+                  </div>
+                  
+                  <div class="sonic-select" *ngIf="buyOption === 'usd'" #selectContainer>
+                    <button class="nft_gradient_button2" #selectButton (click)="toggleSelect($event)">
+                      {{ selectedCurrency }} ▼
+                    </button>
+                    <ul class="sonic-options" #options (click)="selectOption($event)">
+                      <li *ngFor="let currency of supportedCurrencies" [attr.data-value]="currency">
+                        💎 {{ currency }}
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div class="button-container">
+                    <button *ngIf="buyOption === 'usd'" class="nft_gradient_button buy-usd" (click)="buyNFT()">
+                        Buy for {{ selectedAmount | number:'1.2-2' }} {{ selectedCurrency }}
+                    </button>
+                    <button *ngIf="buyOption === 'star'" class="nft_gradient_button buy-star">
+                        Buy for <img src="../../../assets/images/icons/star.png" alt="Star" class="star-icon">
+                    </button>
+                </div>
+        
+            </div>
+        </div>
+
+        <div class="nft-purchase-overlay" [style.display]="showModal_buy ? 'flex' : 'none'">
+            <div class="nft-purchase-modal">
+                <h2 class="nft-purchase-title">Invoice #{{ paymentId }}</h2>
+                <p class="nft-purchase-timer">Time to pay: {{ timeToPayFormatted }}</p>
+                <div class="nft-purchase-amount">
+                    <span>Amount to send: {{ selectedAmount }} {{ selectedCurrency }}</span>
+                    <i class="copy-icon" (click)="copyToClipboard(selectedAmount + ' ')">&#128203;</i>
+                </div>
+                <div class="nft-purchase-address">
+                    <div class="address-container">
+                        <span>Address:</span>
+                        <span class="address-value">{{ address }}</span>
+                    </div>
+                    <i class="copy-icon" (click)="copyToClipboard(address)">&#128203;</i>
+                </div>
+                <div class="nft-purchase-qr-code">
+                    <div *ngIf="isQRCodeLoading" class="loading-indicator">
+                        <div class="loading-spinner"></div>
+                        <p>Generating QR Code...</p>
+                    </div>
+                    <img *ngIf="!isQRCodeLoading" [src]="qrCodeUrl" alt="QR Code">
+                </div>
+                <!-- Отображение полного тела ответа -->
+                <!-- <div class="payment-details" *ngIf="paymentDetails">
+                    <h3>Payment Details:</h3>
+                    <pre>{{ paymentDetails | json }}</pre>
+                </div> -->
+                <button class="nft-purchase-delete-btn" (click)="cancelPayment()">DELETE INVOICE</button>
+                <div class="payment-status" *ngIf="!paymentConfirmed">
+                    <p>Waiting for payment</p>
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="overlay" #overlay></div>
+    </div>
+</body>
