@@ -54,10 +54,6 @@ interface UserNftResponse {
   is_active: boolean;
 }
 
-// interface BalanceResponse {
-//   balance: number;
-// }
-
 interface EnergyResponse {
   left_energy: number;
 }
@@ -102,6 +98,8 @@ export class HomeService {
     return timeDiff >= 24 * 60 * 60 * 1000; // 24 часа в миллисекундах
   }
 
+  // ПОЛУЧЕНИЕ С БЭКА СТАТУСА О ВОЗМОЖНОСТИ ИГРАТЬ В ИГРУ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   playGame(): Observable<any> {
     return this.http.get<any>(`${HomeService.API_URL}home/game-status`, { headers: HomeService.headers }).pipe(
       tap(response => {
@@ -135,6 +133,8 @@ export class HomeService {
     this.maxTapsSubject.next(maxTaps);
   }
 
+  // ДОБАВЛЕНИЕ СОБРАННЫХ ОЧКОВ ЗА ИГРУ В БАЛАНС //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   submitGameResult(score: number, isWin: boolean): Observable<any> {
     const payload = {
       game_points: score,
@@ -154,12 +154,7 @@ export class HomeService {
     );
   }
 
-  public static get headers(): HttpHeaders {
-    const telegramInitData = (window as any).Telegram?.WebApp?.initData || '';
-    return new HttpHeaders()
-      .set('X-Telegram-Init-Data', telegramInitData)
-      .set('Content-Type', 'application/json');
-  }
+  // ПОЛУЧЕНИЕ С БЭКА ТЕКУЩЕЙ NFT ЮЗЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getMostExpensiveNft(): Observable<UserNftResponse> {
     return this.http.get<UserNftResponse>(`${HomeService.API_URL}nft/my`, { headers: HomeService.headers })
@@ -174,6 +169,8 @@ export class HomeService {
       );
   }
 
+  // ПОЛУЧЕНИЕ С БЭКА ИНФУ О ДОСТУПНЫХ NFT ДЛЯ ИЗЕРА ЧТО БЫ ВЫШЕ ИСКАТЬ ИЗ НИК САМУЮ ДОРОГУЮ ТО ЕСТЬ ТЕКУЩУЮ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   getAllUserNfts(): Observable<UserNftResponse> {
     return this.http.get<UserNftResponse>(`${HomeService.API_URL}nft/my-all`, { headers: HomeService.headers })
       .pipe(
@@ -182,10 +179,14 @@ export class HomeService {
       );
   }
 
+  // ЭТА ХУЙНЯ ВРОДЕ КАК ВООБЩЕ НЕ НУЖНА НО ЮЗАЕТСЯ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   private updateActiveSkin(nftId: number) {
     // Implement the logic to update the active skin
     // For example, you can emit an event or update a BehaviorSubject
   }
+
+  // ПОЛУЧЕНИЕ С БЭКА БАЛАНС ЮЗЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getUserBalance(): Observable<number> {
     return this.http.get<UserResponse>(`${HomeService.API_URL}user/balances`, { headers: HomeService.headers })
@@ -200,6 +201,8 @@ export class HomeService {
   updateBalance(balance: number) {
     this.balanceSubject.next(balance);
   }
+
+  // ПОЛУЧЕНИЕ С БЭКА ОСТАВШУЮСЯ ЕНЕРГИЮ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getLeftEnergy(): Observable<number> {
     return this.http.get<EnergyResponse>(`${HomeService.API_URL}home/left-energy`, { headers: HomeService.headers })
@@ -216,6 +219,8 @@ export class HomeService {
     console.log('Энергия обновлена:', energy);
   }
 
+  // РЕГИСТРАЦИЯ КЛИКА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   click(): Observable<number> {
     return this.http.post<ClickResponse>(`${HomeService.API_URL}home/click`, {}, { headers: HomeService.headers }).pipe(
       map(response => response.clicks),
@@ -227,6 +232,8 @@ export class HomeService {
       catchError(this.handleError)
     );
   }
+
+  // ПОЛУЧЕНИЕ С БЭКА ИНФУ О ЛИДЕРБОРДАХ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getLeaderboardSonics(): Observable<LeaderboardResponse> {
     return this.http.get<LeaderboardResponse>(`${HomeService.API_URL}home/leader-board-sonics`, { headers: HomeService.headers })
@@ -252,6 +259,8 @@ export class HomeService {
       );
   }
 
+  // ПОЛУЧЕНИЕ С БЭКА РЕФКУ ЮЗЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   getReferralLink(): Observable<string> {
     return this.http.get<any>(`${HomeService.API_URL}home/referral-link`, { headers: HomeService.headers }).pipe(
       map(response => response.referral_link),
@@ -268,8 +277,10 @@ export class HomeService {
     return `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(link)}`;
   }
 
+  // ХУЙНЯ ДЛЯ АВТОКЛИКЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   processAutoClicker(): Observable<any> {
-    return this.http.post<{clicks_added: number}>(`${HomeService.API_URL}home/auto-clicker/process`, {}, { headers: HomeService.headers });
+    return this.http.post<{ clicks_added: number }>(`${HomeService.API_URL}home/auto-clicker/process`, {}, { headers: HomeService.headers });
   }
 
   startAutoClickerProcess(): Observable<any> {
@@ -284,7 +295,7 @@ export class HomeService {
       }),
       catchError(error => {
         if (error.status === 403) {
- 
+
         } else {
         }
         return throwError(() => error);
@@ -296,6 +307,13 @@ export class HomeService {
     return this.http.get<AutoClickerStatus>(`${HomeService.API_URL}home/auto-clicker/status`, { headers: HomeService.headers }).pipe(
       catchError(this.handleError)
     );
+  }
+
+  public static get headers(): HttpHeaders {
+    const telegramInitData = (window as any).Telegram?.WebApp?.initData || '';
+    return new HttpHeaders()
+      .set('X-Telegram-Init-Data', telegramInitData)
+      .set('Content-Type', 'application/json');
   }
 
   private handleError(error: HttpErrorResponse) {

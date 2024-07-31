@@ -3,6 +3,7 @@ import { map } from 'rxjs/operators';
 import { HomeService } from '../app/services/home.service';
 import { Router } from '@angular/router';
 import { take } from 'rxjs/operators';
+import { TelegramService } from '../app/services/telegram.service';
 
 import {
     CachedNft,
@@ -51,30 +52,34 @@ export interface FloatingNumber {
     velocityY: number;
 }
 
+// ИНИЦИАЛИЗАЦИЯ КОМПОНЕНТОВ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function initializeComponent(component: any, homeService: HomeService) {
     getCurrentPrice(component);
     getReferralLink(component, homeService);
     getBalance(component, homeService);
-  
+
     homeService.energy$.pipe(take(1)).subscribe(energy => {
-      component.energy = energy;
-      component.updateEnergyPercentage();
+        component.energy = energy;
+        component.updateEnergyPercentage();
     });
-  
+
     homeService.maxTaps$.pipe(take(1)).subscribe(maxTaps => {
-      component.maxTaps = maxTaps;
-      component.updateEnergyPercentage();
+        component.maxTaps = maxTaps;
+        component.updateEnergyPercentage();
     });
-  
+
     getCachedNft(component, homeService).subscribe(
-      (cachedNft: CachedNft) => {
-        component.cachedNft = cachedNft;
-        if (cachedNft.nft && cachedNft.is_active) {
-          selectSkinById(component, cachedNft.nft.nft_id);
-        }
-      },
+        (cachedNft: CachedNft) => {
+            component.cachedNft = cachedNft;
+            if (cachedNft.nft && cachedNft.is_active) {
+                selectSkinById(component, cachedNft.nft.nft_id);
+            }
+        },
     );
-  }
+}
+
+// ВРОДЕ КАК ОТКЛЮЧЕНИЕ АВТОКЛИКЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function cleanupComponent(component: any) {
     if (component.autoClickerSubscription) {
@@ -82,6 +87,8 @@ export function cleanupComponent(component: any) {
     }
     getBalance(component, component.homeService);
 }
+
+// ПОЛУЧЕНИЕ NFT ИЗ КЭША //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function getCachedNft(component: any, homeService: HomeService): Observable<CachedNft> {
     const cacheTime = 5 * 60 * 1000;
@@ -103,6 +110,8 @@ export function getCachedNft(component: any, homeService: HomeService): Observab
     );
 }
 
+// ЗАГРУЗКА КАРТИНОК //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function preloadImages(skins: Skin[]) {
     skins.forEach(skin => {
         [skin.image1, skin.image2].forEach(imageSrc => {
@@ -112,11 +121,15 @@ export function preloadImages(skins: Skin[]) {
     });
 }
 
+// ПОЛУЧЕНИЕ КОЛИЧЕСТВА ОЧКОВ ЗА ТАП //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export const getScorePerTap = (currentNft: any) => {
     return currentNft.score_per_tap;
 };
 
-export function handleTap(component: any, event: TouchEvent | MouseEvent, homeService: HomeService) {
+// ТАП //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function handleTap(component: any, event: TouchEvent | MouseEvent, homeService: HomeService, telegramService: TelegramService) {
     const currentNft = component.cachedNft.nft || DEFAULT_NFT;
     if (component.energy > 0) {
         if ('vibrate' in navigator) {
@@ -172,14 +185,21 @@ export function handleTap(component: any, event: TouchEvent | MouseEvent, homeSe
                 component.updateEnergyPercentage();
             },
         );
-    } 
+    }
     else {
-        // Показываем алерт, когда энергия закончилась
-        alert("You've used up all your energy for today. It will replenish tomorrow.");
+
+        if (telegramService.isTelegramWebAppAvailable()) {
+            telegramService.showAlert('You used up all your energy for today. It will replenish tomorrow.');
+        } else {
+            console.warn('Telegram WebApp is not available');
+        }
+
+
     }
 
-} 
+}
 
+// АНИМАЦИЯ ЦИФР ПРИ ТАПАХ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function animateNumbers(component: any) {
     component.numbers.forEach((item: FloatingNumber) => {
@@ -192,6 +212,8 @@ export function animateNumbers(component: any) {
 
     requestAnimationFrame(() => animateNumbers(component));
 }
+
+// ОТКРЫТИЕ/ЗАКРЫТИЕ МОДАЛОК //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function openModal(component: any) {
     if (component.modal) component.modal.nativeElement.style.display = "block";
@@ -225,10 +247,14 @@ export function closeLeaderboard(component: any) {
     if (component.leaderboardOverlay) component.leaderboardOverlay.nativeElement.style.display = "none";
 }
 
+// ВЫБОР ТИПА ЛЕДЕРБОРДА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function setLeaderboardType(component: any, type: 'sonics' | 'referrals' | 'spentNFT', homeService: HomeService) {
     component.leaderboardType = type;
     loadLeaderboardData(component, type, homeService);
 }
+
+// ЗАГРУЗКА ДЫННЫХ ЛИДЕРБОРДА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function loadLeaderboardData(component: any, type: 'sonics' | 'referrals' | 'spentNFT', homeService: HomeService) {
     let observable: Observable<LeaderboardResponse>;
@@ -259,13 +285,25 @@ export function loadLeaderboardData(component: any, type: 'sonics' | 'referrals'
     );
 }
 
-export function copyReferralLink(referralLink: string) {
+// КОПИРОВАНИЕ РЕФКИ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function copyReferralLink(referralLink: string, telegramService: TelegramService) {
     navigator.clipboard.writeText(referralLink).then(() => {
-        alert('Referral link copied to clipboard!');
+        if (telegramService.isTelegramWebAppAvailable()) {
+            telegramService.showAlert('Referral link copied to clipboard!');
+        } else {
+            console.warn('Telegram WebApp is not available');
+        }
     }, (err) => {
-        alert('Failed to copy referral link. Please try again.');
+        if (telegramService.isTelegramWebAppAvailable()) {
+            telegramService.showAlert('Failed to copy referral link. Please try again.');
+        } else {
+            console.warn('Telegram WebApp is not available');
+        }
     });
 }
+
+// ПОЛУЧЕНИЕ ЦЕНЫ ТОКЕНА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function getCurrentPrice(component?: any): Promise<number | null> {
     const apiUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=harrypotterobamasonic10in&vs_currencies=usd';
@@ -283,6 +321,8 @@ export function getCurrentPrice(component?: any): Promise<number | null> {
             return null;
         });
 }
+
+// ВЫБОР СКИНА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function selectSkinById(component: any, id: number) {
     const currentNft = component.cachedNft.nft || DEFAULT_NFT;
@@ -318,27 +358,37 @@ export function selectSkinById(component: any, id: number) {
     }
 }
 
-export function handlePlayClick(component: any, homeService: HomeService, router: Router): void {
+// КНОПКА ИГРЫТЬ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function handlePlayClick(component: any, homeService: HomeService, router: Router, telegramService: TelegramService): void {
     const currentNft = component.cachedNft.nft || DEFAULT_NFT;
     homeService.playGame().subscribe(
         response => {
             if (response.can_game) {
                 router.navigate(['/game'], { state: { score_per_tap: currentNft.score_per_tap } });
             } else {
-                alert('You can only play once per day. Please try again later.');
-                // alert(JSON.stringify(currentNft.score_per_tap));
+                if (telegramService.isTelegramWebAppAvailable()) {
+                    telegramService.showAlert('You can only play once per day. Please try again later.');
+                } else {
+                    console.warn('Telegram WebApp is not available');
+                }
             }
         },
         error => {
             if (error.status === 400 && error.error.detail) {
                 alert(error.error.detail);
             } else {
-                alert('You can only play once per day. Please try again later!!!');
-                // alert(JSON.stringify(currentNft.score_per_tap));
+                if (telegramService.isTelegramWebAppAvailable()) {
+                    telegramService.showAlert('You can only play once per day. Please try again later!!!');
+                } else {
+                    console.warn('Telegram WebApp is not available');
+                }
             }
         }
     );
 }
+
+// ПОЛУЧЕНИЕ РЕФКИ ЮЗЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function getReferralLink(component: any, homeService: HomeService) {
     homeService.getReferralLink().subscribe(
@@ -350,27 +400,19 @@ export function getReferralLink(component: any, homeService: HomeService) {
     );
 }
 
+// ПОЛУЧЕНИЕ БАЛАНСА ЮЗЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function getBalance(component: any, homeService: HomeService) {
     homeService.getUserBalance().subscribe(
         balance => {
-            component.balance = balance; 
+            component.balance = balance;
             homeService.updateBalance(balance);
         },
         error => console.error('Ошибка при получении баланса:', error)
     );
 }
 
-// export function getLeftEnergy(component: any, homeService: HomeService) {
-//     homeService.getLeftEnergy().subscribe(
-//         energy => {
-//             homeService.updateEnergy(energy);
-//             component.energy = energy;
-//             component.updateEnergyPercentage();
-//         },
-//         error => console.error('Ошибка при получении оставшейся энергии:', error)
-//     );
-// }
-
+// ГЕНЕРИТ QR КОД //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function generateQRCode(data: string): string {
     return 'https://api.qrserver.com/v1/create-qr-code/?data=' + encodeURIComponent(data);

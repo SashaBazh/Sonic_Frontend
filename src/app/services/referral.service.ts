@@ -16,12 +16,12 @@ export interface Referral {
 })
 export class ReferralService {
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   getReferralsCount(): Observable<Referral[]> {
     return this.http.get<Referral[]>(`${AuthService.API_URL}/team/referrals-count`, { headers: AuthService.headers });
   }
-  
+
   getTotalMembers(): Observable<Referral[]> {
     return this.http.get<Referral[]>(`${AuthService.API_URL}/team/total-members`, { headers: AuthService.headers });
   }
@@ -34,3 +34,7 @@ export class ReferralService {
     return this.http.get<Referral[]>(`${AuthService.API_URL}/team/referrals-energy`, { headers: AuthService.headers });
   }
 }
+
+
+
+// ВОЗЖМОЖНО ЭТА ПАРАША ВООБЩЕ НЕ НУЖНА ТАК КАК ДУБЛИРУЕТСЯ С TEAM.SERVICE.TS  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

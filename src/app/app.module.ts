@@ -12,8 +12,12 @@ import { LoadingComponent } from './pages/loading/loading.component';
 import { TaskService } from './services/task.service';
 import { BuynftComponent } from './pages/buynft/buynft.component';
 import { FormsModule } from '@angular/forms';
-import { GameComponent } from './pages/game/game.component';
 import { NftService } from '../app/services/nft.service';
+import { TelegramService } from './services/telegram.service';
+
+export function initializeApp(telegramService: TelegramService) {
+  return () => telegramService.initializeApp();
+}
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, BuynftComponent, QuestComponent, MybankComponent, MyteamComponent, LoadingComponent],
@@ -22,11 +26,12 @@ import { NftService } from '../app/services/nft.service';
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(routes)
-    
+
   ],
   providers: [
     NftService,
-    TaskService
+    TaskService,
+    TelegramService
   ],
 
   bootstrap: [AppComponent]

@@ -8,7 +8,7 @@ interface Task {
   name: string;
   award: number;
   condition: string;
-  image_uri?: string;
+  image_uri: string;
 }
 
 @Injectable({
@@ -27,6 +27,8 @@ export class TaskService {
 
   constructor(private http: HttpClient) { }
 
+  // ПОЛУЧЕНИЕ С БЭКА ДОСТУПНЫХ ЗАДАНИЙ К ВЫПОЛНЕНИЮ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   getAvailableTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(`${TaskService.API_URL}task/`, { headers: TaskService.headers }).pipe(
       tap(tasks => {
@@ -37,6 +39,8 @@ export class TaskService {
       })
     );
   }
+
+  // ПОЛУЧЕНИЕ С БЭКА ВОПОЛНЕНО ЛИ ЗАДАНИЕ   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   completeTask(taskId: number): Observable<any> {
     return this.http.post<any>(`${TaskService.API_URL}task/`, { task_id: taskId }, { headers: TaskService.headers }).pipe(

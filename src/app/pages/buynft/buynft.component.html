@@ -135,36 +135,36 @@
                 <div class="referral-info" *ngIf="!isSelectOpen">
                     <h3>Referral Rewards</h3>
                     <div class="referral-level">
-                        <span>Level 1: {{ (selectedNFT.real_money_1_level * 100).toFixed(0) }}% of referral purchase</span>
-                      </div>
-                      <div class="referral-level">
-                        <span>Level 2: {{ (selectedNFT.real_money_2_level * 100).toFixed(0) }}% of referral purchase</span>
-                      </div>
-                      <div class="referral-level">
-                        <span>Level 3: {{ (selectedNFT.real_money_3_level * 100).toFixed(0) }}% of referral purchase</span>
-                      </div>
-                  </div>
-                  
-                  <div class="sonic-select" *ngIf="buyOption === 'usd'" #selectContainer>
-                    <button class="nft_gradient_button2" #selectButton (click)="toggleSelect($event)">
-                      {{ selectedCurrency }} ▼
+                        <span>Level 1: {{ (selectedNFT.real_money_1_level * 100).toFixed(0) }}% of referral
+                            purchase</span>
+                    </div>
+                    <div class="referral-level">
+                        <span>Level 2: {{ (selectedNFT.real_money_2_level * 100).toFixed(0) }}% of referral
+                            purchase</span>
+                    </div>
+                    <div class="referral-level">
+                        <span>Level 3: {{ (selectedNFT.real_money_3_level * 100).toFixed(0) }}% of referral
+                            purchase</span>
+                    </div>
+                </div>
+
+                <div class="sonic-select" *ngIf="buyOption === 'usd'" #selectContainer>
+                    <button class="nft_gradient_button2">
+                        {{ selectedCurrency }}
                     </button>
-                    <ul class="sonic-options" #options (click)="selectOption($event)">
-                      <li *ngFor="let currency of supportedCurrencies" [attr.data-value]="currency">
-                        💎 {{ currency }}
-                      </li>
-                    </ul>
-                  </div>
-                  
-                  <div class="button-container">
-                    <button *ngIf="buyOption === 'usd'" class="nft_gradient_button buy-usd" (click)="buyNFT()">
-                        Buy for {{ selectedAmount | number:'1.2-2' }} {{ selectedCurrency }}
-                    </button>
+                </div>
+
+                <div class="button-container">
+                    <ng-container *ngIf="buyOption === 'usd'">
+                        <button class="nft_gradient_button buy-usd" (click)="buyNFT()">
+                            Buy for {{ this.originalPrice }}
+                        </button>
+                    </ng-container>
                     <button *ngIf="buyOption === 'star'" class="nft_gradient_button buy-star">
                         Buy for <img src="../../../assets/images/icons/star.png" alt="Star" class="star-icon">
                     </button>
                 </div>
-        
+
             </div>
         </div>
 
@@ -173,15 +173,10 @@
                 <h2 class="nft-purchase-title">Invoice #{{ paymentId }}</h2>
                 <p class="nft-purchase-timer">Time to pay: {{ timeToPayFormatted }}</p>
                 <div class="nft-purchase-amount">
-                    <span>Amount to send: {{ selectedAmount }} {{ selectedCurrency }}</span>
-                    <i class="copy-icon" (click)="copyToClipboard(selectedAmount + ' ')">&#128203;</i>
-                </div>
-                <div class="nft-purchase-address">
-                    <div class="address-container">
-                        <span>Address:</span>
-                        <span class="address-value">{{ address }}</span>
-                    </div>
-                    <i class="copy-icon" (click)="copyToClipboard(address)">&#128203;</i>
+                    <span>Amount to send: {{ pay_amount }} {{ selectedCurrency }}</span>
+                    <i class="copy-icon" (click)="copyToClipboard(pay_amount + '')">
+                        <img src="../../../assets/images/icons/home_referral.png" alt="copy icon" width="16">
+                    </i>
                 </div>
                 <div class="nft-purchase-qr-code">
                     <div *ngIf="isQRCodeLoading" class="loading-indicator">
@@ -189,12 +184,9 @@
                         <p>Generating QR Code...</p>
                     </div>
                     <img *ngIf="!isQRCodeLoading" [src]="qrCodeUrl" alt="QR Code">
+                    <span class="address-value">{{address}}</span>
                 </div>
-                <!-- Отображение полного тела ответа -->
-                <!-- <div class="payment-details" *ngIf="paymentDetails">
-                    <h3>Payment Details:</h3>
-                    <pre>{{ paymentDetails | json }}</pre>
-                </div> -->
+                <button class="nft-purchase-copy-btn" (click)="copyToClipboard(address)" >Copy address</button>
                 <button class="nft-purchase-delete-btn" (click)="cancelPayment()">DELETE INVOICE</button>
                 <div class="payment-status" *ngIf="!paymentConfirmed">
                     <p>Waiting for payment</p>

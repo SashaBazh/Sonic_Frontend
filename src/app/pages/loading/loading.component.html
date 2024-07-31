@@ -1,13 +1,12 @@
 <div class="game-container">
-  <div class="ground">
-    <img src="https://hpos10i.com/wiggly-pictures/ezgif-7-ad2625c2ad7f.gif" class="sonic-gif" alt="Sonic">
-    <div class="meme-text">GOTTA GO FAST</div>
-  </div>
   <div class="loading-bar-container">
-    <div class="loading-bar">
+    <div #loadingBar class="loading-bar">
       <div class="progress" [style.width.%]="percentage"></div>
       <span class="loading-text">Loading {{percentage}}%</span>
     </div>
   </div>
-  <audio #gameAudio></audio>
+  <div class="ground">
+    <img src="https://hpos10i.com/wiggly-pictures/ezgif-7-ad2625c2ad7f.gif" class="sonic-gif" alt="Sonic">
+    <div class="meme-text">GOTTA GO FAST</div>
+  </div>
 </div>

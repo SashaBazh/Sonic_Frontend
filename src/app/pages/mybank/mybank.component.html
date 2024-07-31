@@ -42,14 +42,8 @@
                 </div>
             </div>
             <div class="he"></div>
-
-
-
         </div>
     </div>
-
-
-
     <div class="main_footer">
         <div class="main_footer_container">
             <div class="main_footer_icon_box" [routerLink]="['/home']" routerLinkActive="active">
@@ -79,30 +73,25 @@
             <div class="balance-label">SONIC BALANCE</div>
             <div class="balance-amount"> {{ referralBalance | number:'1.2-2' }}</div>
         </div>
-        <button class="sonic-button" (click)="closeKeyboard()">CLOSE KEYBOARD</button>
         <div class="input-group">
             <label>PAYMENT SYSTEM</label>
             <div class="select-wrapper">
-                <input type="text" value="💎 BEP-20" readonly>
+                <input type="text" value="harrypotterobamasonic10inu(ERC-20)" readonly>
             </div>
         </div>
-
         <div class="input-group">
             <label>WITHDRAW AMOUNT</label>
             <input type="number" [(ngModel)]="withdrawAmount" placeholder="0">
             <span class="withdraw-all" (click)="withdrawAll()">WITHDRAW ALL</span>
         </div>
-
         <div class="available">AVAILABLE {{ referralBalance | number:'1.2-2' }} SONIC</div>
-
         <div class="input-group">
             <label>WITHDRAW ADDRESS</label>
             <input type="text" [(ngModel)]="withdrawAddress" (input)="checkAddress()">
         </div>
-
         <button *ngIf="isAddressValid" class="sonic-button submit-button" (click)="submitWithdraw()">WITHDRAW</button>
     </div>
-    <div class="overlay" #overlay></div>
+    <div class="overlay" #overlay (click)="closeKeyboard()"></div>
 
 
 </body>

@@ -50,6 +50,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('selectButton') selectButton!: ElementRef;
   @ViewChild('selectContainer') selectContainer!: ElementRef;
   @ViewChild('options') options!: ElementRef;
+  @ViewChild('options') optionsElement!: ElementRef;
 
   selectedCurrency: string = '';
   selectedAmount: number = 0;
@@ -65,6 +66,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
 
   nfts: NFT[] = [];
   isSelectOpen: boolean = false;
+  pay_amount: number | undefined;
 
   currentNFT: NftResponse | null = null;
   isNftActive: boolean = false;
@@ -82,14 +84,16 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   supportedCurrencies: string[] = [];
   paymentDetails: any;
   isLoading: boolean | undefined;
+  isLoadingPrice: boolean = true;
 
   originalPrice: number = 0;
 
   constructor(
     private nftService: NftService,
     private paymentService: PaymentService,
-    private router: Router
-  ) { 
+    private router: Router,
+    private elementRef: ElementRef
+  ) {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.setupBackButton(event.url);
@@ -114,6 +118,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.preloadPrices();
     this.loadCurrentNFT();
     this.loadNfts();
     this.loadSupportedCurrencies();
@@ -122,6 +127,11 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    const listItems = this.optionsElement.nativeElement.querySelectorAll('li');
+    listItems.forEach((item: HTMLElement, index: number) => {
+      item.style.animationDelay = `${index * 0.1}s`;
+    });
+
     if (this.selectButton) {
       this.selectButton.nativeElement.addEventListener('click', this.toggleSelect.bind(this));
     }
@@ -156,76 +166,44 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  priceCache: { [key: string]: number } = {};
+
+  preloadPrices() {
+    const currencies = ['tether', 'binancecoin', 'the-open-network'];
+    currencies.forEach(coinId => {
+      this.paymentService.getPrice(coinId).subscribe(
+        (price) => {
+          this.priceCache[coinId] = price;
+        },
+        (error) => {
+          console.error(`Error fetching price for ${coinId}:`, error);
+        }
+      );
+    });
+  }
+
   openModal(nft: NFT, option: 'usd' | 'star') {
+    this.showModal();
     this.selectedNFT = nft;
     this.buyOption = option;
     this.originalPrice = nft.price;
-    this.selectedCurrency = 'USDTTRC20';
+    this.selectedCurrency = 'harrypotterobamasonic10inu';
   
     if (option === 'usd') {
-      this.isLoading = true;
-      this.updatePrice();
+      // this.updatePrice();
     } else {
       this.selectedAmount = nft.price;
-      this.showModal();
     }
   }
 
-
-  updatePrice() {
-    if (this.selectedNFT) {
-      const coinId = this.getCoinGeckoId(this.selectedCurrency);
-      this.paymentService.getPrice(coinId).subscribe(
-        (price) => {
-          this.selectedAmount = this.originalPrice * price;
-          this.isLoading = false;
-          this.showModal();
-        },
-        (error) => {
-          console.error('Error fetching price from CoinGecko:', error);
-          this.isLoading = false;
-          // Обработка ошибки
-        }
-      );
-    }
-  }
-
-  getCoinGeckoId(currency: string): string {
-    switch (currency) {
-      case 'BNBBSC':
-        return 'binancecoin';
-      case 'TON':
-        return 'the-open-network';
-      case 'USDTTRC20':
-        return 'tether';
-      default:
-        return 'tether';
-    }
-  }
-
-  selectOption(event: Event) {
-    const target = event.target as HTMLElement;
-    if (target.tagName === 'LI') {
-      this.selectedCurrency = target.getAttribute('data-value') || 'TON';
-      this.selectButton.nativeElement.textContent = `${this.selectedCurrency} ▼`;
-      this.selectContainer.nativeElement.classList.remove('active');
-      this.options.nativeElement.style.display = "none";
-      this.isSelectOpen = false;
-      this.updatePrice();
-    }
-  }
-
-  
   private showModal() {
     this.modal.nativeElement.style.display = 'block';
     this.overlay.nativeElement.style.display = 'block';
-    this.selectButton.nativeElement.textContent = `${this.selectedCurrency} ▼`;
   }
-
+  
   closeModal() {
     this.modal.nativeElement.style.display = 'none';
     this.overlay.nativeElement.style.display = 'none';
-    this.options.nativeElement.style.display = 'none';
   }
 
   loadSupportedCurrencies() {
@@ -244,16 +222,16 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.selectedNFT) {
         this.isCheckingPayment = true;
         this.isQRCodeLoading = true;
-        this.paymentService.createPayment(this.selectedNFT.nft_id, this.selectedCurrency).subscribe(
+        this.paymentService.createPayment(this.selectedNFT.nft_id, 'harrypotterobamasonic10inu').subscribe(
           async (response) => {
             this.paymentId = response.payment_id;
             this.address = response.pay_address;
             this.qrCodeUrl = await this.generateQRCode();
-            // Здесь мы не обновляем selectedAmount, так как оно уже установлено
-            this.selectedCurrency = response.pay_currency;
-
+            this.selectedCurrency = 'harrypotterobamasonic10inu';
+            this.pay_amount = response.pay_amount;
+  
             this.paymentDetails = response;
-
+  
             this.startPaymentCheck();
             this.isCheckingPayment = false;
             this.isQRCodeLoading = false;
@@ -266,7 +244,6 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
         );
       }
     } else if (this.buyOption === 'star') {
-      // Логика для покупки за звезды
     }
   }
 

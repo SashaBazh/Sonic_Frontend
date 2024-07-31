@@ -7,20 +7,18 @@
     -ms-user-select: none;
 }
 
-html,
 body {
-    height: 100%;
     margin: 0;
     padding: 0;
-}
-
-body {
     overflow-y: auto;
     overflow-x: hidden;
     overflow-y: auto;
     overflow-x: auto;
-    max-width: 450px;
-    min-width: 380px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    min-width: 370px;
 }
 
 .single_container {
@@ -55,12 +53,10 @@ body {
     margin-left: 20px;
     margin-top: 10px;
     margin-bottom: 10px;
-}
-
-.icon {
     height: 30px;
     width: 30px;
 }
+
 
 .quest_info_text {
     margin-right: 93px;
@@ -79,7 +75,7 @@ body {
     background-color: #309CFF;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     border-radius: 15px;
-    padding: 20px;
+    padding: 10px;
     padding-left: 10px;
     padding-right: 10px;
     width: 260px;
@@ -95,7 +91,7 @@ body {
 }
 
 .quest_task_container>*:nth-child(2) {
-    margin-right: 40px;
+    margin-right: 35px;
 }
 
 .quest_task_container>*:nth-child(3) {
@@ -136,6 +132,11 @@ body {
     cursor: pointer;
 }
 
+.task-status .icon {
+    width: 30px;
+    height: 30px;
+}
+
 .loading-spinner {
     width: 20px;
     height: 20px;
@@ -156,11 +157,63 @@ body {
 }
 
 .completed {
-    /* background-color: #4CAF50; */
     border-radius: 50%;
     padding: 2px;
 }
 
+
+.loading-animation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+  }
+  
+  .pulse-container {
+    width: 120px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .pulse-bubble {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #309CFF;
+  }
+  
+  .pulse-bubble-1 {
+    animation: pulse 0.4s ease 0s infinite alternate;
+  }
+  .pulse-bubble-2 {
+    animation: pulse 0.4s ease 0.2s infinite alternate;
+  }
+  .pulse-bubble-3 {
+    animation: pulse 0.4s ease 0.4s infinite alternate;
+  }
+  
+  /* @keyframes pulse {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0.25;
+      transform: scale(0.75);
+    }
+  }
+  
+  .loading-text {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #309CFF;
+    font-weight: bold;
+  } */
+
+
+  
 .he {
     height: 360px;
 }
@@ -207,7 +260,7 @@ body {
         inset 0 0 30px rgba(255, 255, 255, 0.3);
 }
 
-@keyframes pulse {
+/* @keyframes pulse {
     0% {
         box-shadow: 
             0 0 30px rgba(255, 215, 0, 0.7),
@@ -220,10 +273,7 @@ body {
             0 0 80px rgba(30, 144, 255, 0.7),
             inset 0 0 40px rgba(255, 255, 255, 0.4);
     }
-}
-
-/* Остальные стили остаются без изменений */
-
+} */
 
 .close {
     color: #ffffff;
@@ -264,6 +314,13 @@ body {
     font-size: 18px;
     color: white;
     margin-top: 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 100%; 
+    height: auto; 
+    min-height: 50px;
+    overflow-wrap: break-word;
+    word-wrap: break-word; 
 }
 
 .modal-button {
@@ -286,9 +343,6 @@ body {
     font-weight: bold;
     margin-top: 10px;
 }
-
-
-
 
 /* FOOTER //////////////////////////////////////////////////////////////////////////////////////////*/
 
@@ -380,50 +434,4 @@ body {
 .main_footer_icon_text {
     font-size: 10px;
     margin-top: 5px;
-}
-
-/* MEDIA //////////////////////////////////////////////////////////////////////////////////////////*/
-
-@media (max-width: 420px) {
-    .quest_info_header {
-        font-size: 12px;
-    }
-
-    .quest_task_container .icon {
-        width: 28px;
-        height: 28px;
-    }
-}
-
-@media (max-width: 380px) {
-    .quest_info_header {
-        font-size: 10px;
-    }
-
-    .quest_task_container .icon {
-        width: 26px;
-        height: 26px;
-    }
-}
-
-@media (max-width: 370px) {
-    .quest_info_header {
-        font-size: 9px;
-    }
-
-    .quest_task_container .icon {
-        width: 26px;
-        height: 26px;
-    }
-}
-
-@media (max-width: 360px) {
-    .quest_info_header {
-        font-size: 7px;
-    }
-
-    .quest_task_container .icon {
-        width: 26px;
-        height: 26px;
-    }
 }

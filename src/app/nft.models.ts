@@ -24,5 +24,3 @@ export interface NftResponse {
   display_price: number;
   image_uri: string;
 }
-
-  

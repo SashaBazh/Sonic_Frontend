@@ -18,7 +18,7 @@ export class GameService {
   public balance$ = this.balanceSubject.asObservable();
 
   private scorePerTapSubject = new BehaviorSubject<number>(0);
-public scorePerTap$ = this.scorePerTapSubject.asObservable();
+  public scorePerTap$ = this.scorePerTapSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) {
 
@@ -32,10 +32,12 @@ public scorePerTap$ = this.scorePerTapSubject.asObservable();
   setScorePerTap(score: number) {
     this.scorePerTapSubject.next(score);
   }
-  
+
   getScorePerTap(): Observable<number> {
     return this.scorePerTap$;
   }
+
+  // ДОБАЛЕНИЕ ОЧКОВ ЗА ИГРУ В БАЛАНС //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   submitGameResult(score: number, isWin: boolean): Observable<any> {
     const payload = {

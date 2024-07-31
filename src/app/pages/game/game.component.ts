@@ -42,22 +42,22 @@ export class GameComponent implements OnInit, AfterViewInit {
   currentSonicElement!: HTMLImageElement;
   nextSonicElement!: HTMLImageElement;
 
-  animationSpeed = 3; 
+  animationSpeed = 3;
 
 
   constructor(
-    private ngZone: NgZone, 
-    private router: Router, 
-    private authService: AuthService, 
+    private ngZone: NgZone,
+    private router: Router,
+    private authService: AuthService,
     private homeService: HomeService
-  ) { 
+  ) {
     const navigation = this.router.getCurrentNavigation();
-  if (navigation && navigation.extras.state) {
-    this.scorePerTap = navigation.extras.state['score_per_tap'];
-    console.log('Score per tap received:', this.scorePerTap);
-  } else {
-    console.log('No state received');
-  }
+    if (navigation && navigation.extras.state) {
+      this.scorePerTap = navigation.extras.state['score_per_tap'];
+      console.log('Score per tap received:', this.scorePerTap);
+    } else {
+      console.log('No state received');
+    }
   }
 
   ngOnInit() {
@@ -72,7 +72,6 @@ export class GameComponent implements OnInit, AfterViewInit {
         console.log('ngOnInit - Score per tap set:', this.scorePerTap);
       }
     }
-
   }
 
   ngAfterViewInit() {
@@ -95,7 +94,6 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.sonicElement.nativeElement.style.bottom = '12vh';
     this.score = 0;
     this.gameSpeed = 1;
-    // this.points = 1;
     this.updateScore();
 
     this.backgroundPosition = 0;
@@ -104,7 +102,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.preloadImages();
 
     if (this.scorePerTap === undefined) {
-      this.scorePerTap = 100; // или любое другое значение по умолчанию
+      this.scorePerTap = 100;
       console.log('initGame - Default score per tap set:', this.scorePerTap);
     }
   }
@@ -128,7 +126,6 @@ export class GameComponent implements OnInit, AfterViewInit {
 
     obstacle.style.height = 'auto';
 
-    // Вычисляем позицию для спавна
     const sonicRect = this.sonicElement.nativeElement.getBoundingClientRect();
     const gameRect = this.gameElement.nativeElement.getBoundingClientRect();
     const spawnPosition = sonicRect.right - gameRect.left + 150;
@@ -150,7 +147,6 @@ export class GameComponent implements OnInit, AfterViewInit {
     coin.style.width = '5vw';
     coin.style.height = 'auto';
 
-    // Вычисляем позицию для спавна
     const sonicRect = this.sonicElement.nativeElement.getBoundingClientRect();
     const gameRect = this.gameElement.nativeElement.getBoundingClientRect();
     const spawnPosition = sonicRect.right - gameRect.left + 150;
@@ -166,7 +162,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     const elements = this.gameElement.nativeElement.querySelectorAll('.obstacle, .coin');
     elements.forEach((element: HTMLElement) => {
       const elementLeft = parseFloat(element.style.left);
-      if (elementLeft > -10) {  // Удаляем элемент, когда он полностью ушел за левый край
+      if (elementLeft > -10) { 
         element.style.left = `${elementLeft - this.gameSpeed}%`;
       } else {
         element.remove();
@@ -175,7 +171,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       if (this.checkCollision(this.sonicElement.nativeElement, element)) {
         if (element.classList.contains('coin')) {
           this.collectedCoins++;
-          this.score += this.scorePerTap ?? 80; // Используем scorePerTap или 1, если scorePerTap не определено
+          this.score += this.scorePerTap ?? 80; 
           this.updateScore();
           element.remove();
           if (this.collectedCoins >= this.maxCoins) {
@@ -210,13 +206,13 @@ export class GameComponent implements OnInit, AfterViewInit {
   gameOver(isWin: boolean) {
     this.isGameOver = true;
     const message = isWin ? 'You Winner!' : 'Game over!';
-    
+
     this.authService.submitGameResult(this.score, isWin).subscribe(
       response => {
         console.log('Game result submitted successfully:', response);
         this.finalScoreDisplay.nativeElement.textContent = `${message} Your coins: ${this.score}.`;
         this.gameOverModal.nativeElement.style.display = 'block';
-        
+
         if (response.new_balance !== undefined) {
           this.updateDisplayedBalance(response.new_balance);
         }
@@ -228,12 +224,8 @@ export class GameComponent implements OnInit, AfterViewInit {
       }
     );
   }
-  
-  // Добавьте этот метод, если у вас его еще нет
+
   private updateDisplayedBalance(newBalance: number) {
-    // Обновите отображаемый баланс в вашем компоненте
-    // Например:
-    // this.displayedBalance = newBalance;
   }
 
   restartGame() {
@@ -277,12 +269,6 @@ export class GameComponent implements OnInit, AfterViewInit {
         this.sonicElement.nativeElement.src = this.sonicFrames[this.sonicFrame];
       }
     }
-    // if(this.flag){
-    //   this.sonicElement.nativeElement.src = this.sonicFrames[0];
-    // } else {
-    //   this.sonicElement.nativeElement.src = this.sonicFrames[1];
-    // }
-    // this.flag = !this.flag;
   }
 
   updateScore() {
@@ -308,7 +294,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.currentSonicElement.style.position = 'absolute';
     this.nextSonicElement.style.position = 'absolute';
     this.nextSonicElement.style.opacity = '0';
-    
+
     this.sonicElement.nativeElement.appendChild(this.currentSonicElement);
     this.sonicElement.nativeElement.appendChild(this.nextSonicElement);
   }
@@ -318,8 +304,6 @@ export class GameComponent implements OnInit, AfterViewInit {
       this.moveElements();
       this.moveGround();
       this.animateSonic();
-      // Удаляем строку, которая увеличивала скорость игры
-      // this.gameSpeed += 0.001;
       this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
     }
 

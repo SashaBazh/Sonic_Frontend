@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingService } from '../../services/loading.service';
 
@@ -8,47 +8,49 @@ import { LoadingService } from '../../services/loading.service';
   styleUrls: ['./loading.component.css']
 })
 export class LoadingComponent implements OnInit, OnDestroy {
+  @ViewChild('loadingBar')
+  loadingBar!: ElementRef;
   percentage = 0;
+  private animationStartTime: number | null = null;
+  private animationDuration = 2800;
+  private animationFrameId: number | null = null;
 
   constructor(
     private router: Router, 
     private loadingService: LoadingService
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     if (!this.loadingService.getLoading()) {
       this.navigateToHome();
-      return;
-    }
-
-    try {
-      await this.loadAudioAndAnimate();
-    } catch (error) {
-      console.error('Error during initialization:', error);
-    } finally {
-      this.loadingService.setLoading(false);
+    } else {
+      this.startLoading();
     }
   }
 
   ngOnDestroy() {
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
   }
 
-  async loadAudioAndAnimate() {
-    const animationPromise = this.animateLoading();
+  startLoading() {
+    this.animationStartTime = performance.now();
+    this.animateLoading();
   }
 
-
-  animateLoading(): Promise<void> {
-    return new Promise((resolve) => {
-      const interval = setInterval(() => {
-        this.percentage += 1;
-        if (this.percentage >= 100) {
-          clearInterval(interval);
-          this.navigateToHome();
-          resolve();
-        }
-      }, 50);
-    });
+  animateLoading() {
+    const currentTime = performance.now();
+    const elapsedTime = currentTime - (this.animationStartTime || currentTime);
+    
+    if (elapsedTime < this.animationDuration) {
+      this.percentage = Math.min(100, Math.floor((elapsedTime / this.animationDuration) * 100));
+      this.animationFrameId = requestAnimationFrame(() => this.animateLoading());
+    } else {
+      this.percentage = 100;
+      this.loadingService.setLoading(false);
+      this.navigateToHome();
+    }
   }
 
   navigateToHome() {

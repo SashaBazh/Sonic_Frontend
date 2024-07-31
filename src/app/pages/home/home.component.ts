@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';;
 import { HomeService, AutoClickerStatus } from '../../services/home.service';
 import { take } from 'rxjs/operators';
+
 import {
   CachedNft,
   Skin,
@@ -10,6 +11,7 @@ import { Router } from '@angular/router';
 
 import * as HomeFunctions from '../../home.functions';
 import { Subscription } from 'rxjs';
+import { TelegramService } from '../../services/telegram.service';
 
 @Component({
   selector: 'app-home',
@@ -52,7 +54,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   selectedSkin: Skin;
 
   constructor(
-    private homeService: HomeService, private router: Router
+    private homeService: HomeService,
+    private router: Router,
+    private telegramService: TelegramService
   ) {
     this.homeService.energy$.subscribe(energy => {
       this.energy = energy;
@@ -70,7 +74,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.energy = energy;
       this.updateEnergyPercentage();
     });
-  
+
     this.homeService.initializeUserData().pipe(
       take(1)
     ).subscribe(() => {
@@ -81,9 +85,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.checkAutoClickerStatus();
     });
 
-    // alert(JSON.stringify(this.energy));
-    // alert(JSON.stringify(this.maxTaps));
-    
     this.updateCurrentPrice();
     HomeFunctions.initializeComponent(this, this.homeService);
     HomeFunctions.preloadImages(this.skins);
@@ -93,9 +94,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   updateCurrentPrice() {
     HomeFunctions.getCurrentPrice().then(price => {
-        this.currentTokenPrice = price;
+      this.currentTokenPrice = price;
     });
-}
+  }
 
 
   checkAutoClickerStatus() {
@@ -120,7 +121,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     event.stopPropagation();
 
     if (!this.autoClickerAvailable) {
-      alert('Auto-clicker is not available. You need to own the two most expensive NFTs to use it.');
+      if (this.telegramService.isTelegramWebAppAvailable()) {
+        this.telegramService.showAlert('Auto-clicker is not available. You need to own the two most expensive NFTs to use it.');
+      } else {
+        console.warn('Telegram WebApp is not available');
+      }
       return;
     }
 
@@ -144,7 +149,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.autoClickerSubscription = this.homeService.startAutoClickerProcess().subscribe(
         (result) => {
           console.log('Auto-clicker added clicks:', result.clicks_added);
-          // Update user balance if necessary
         },
         (error) => {
           console.error('Error processing auto-clicker:', error);
@@ -160,22 +164,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-
   ngOnDestroy() {
     HomeFunctions.cleanupComponent(this);
     this.stopAutoClickerProcess();
 
   }
 
-  // private updateEnergy() {
-  //   HomeFunctions.getLeftEnergy(this, this.homeService);
-  // }
-
   onTap(event: TouchEvent | MouseEvent) {
-    // alert(JSON.stringify(this.energy));
-    // alert(JSON.stringify(this.maxTaps));
     event.preventDefault();
-    HomeFunctions.handleTap(this, event, this.homeService);
+    HomeFunctions.handleTap(this, event, this.homeService, this.telegramService);
   }
 
   openModal(event: MouseEvent) {
@@ -210,7 +207,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   copyReferralLink() {
-    HomeFunctions.copyReferralLink(this.referralLink);
+    HomeFunctions.copyReferralLink(this.referralLink, this.telegramService);
   }
 
   openLink(url: string) {
@@ -223,8 +220,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   onPlayClick(event: Event): void {
     event.preventDefault();
-    HomeFunctions.handlePlayClick(this, this.homeService, this.router);
-    // alert("The game will appear in the next update");
+    HomeFunctions.handlePlayClick(this, this.homeService, this.router, this.telegramService);
   }
 
   private updateEnergyPercentage() {

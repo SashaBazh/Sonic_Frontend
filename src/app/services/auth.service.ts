@@ -3,6 +3,13 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap, retry, map } from 'rxjs/operators';
 
+// ХУЙНЯ ГДЕ ИЗНАЧАЛЬНО НАХОДИЛИСЬ ВСЕ ЗАПРОСЫ К БЭКУ 
+// ПОТОМ ПО ТИХУ РАССТАВЛЯЛ В НУЖНЫЕ СЕРВИСЫ
+// И ДО СИХ ПОР ЧТО ТО РАБОАТЕТ ОТ СЮДА
+// ПОЭТОМУ ГДЕ ТО В БУДЕЩЕМ ДЛЯ ЧИСТОТЫ КОДА 
+// МОЖНО ВСЕ РАССТАВИТЬ ПО СВИМ МЕСТАМ 
+// ПОКА НЕ ХОЧУ ТУТ НИЧЕГО МЕНЯТЬ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 interface Task {
   task_id: number;
   name: string;
@@ -16,8 +23,8 @@ interface Task {
 interface LeaderboardEntry {
   user_id: string;
   rank: number;
-  name: string;  // Добавьте это
-  score: number; // Добавьте это
+  name: string;
+  score: number;
   telegram_id?: number;
   sonic_balance?: number;
   referral_count?: number;
@@ -38,10 +45,7 @@ interface UserResponse {
   sonic_balance: number;
   referral_balance: number;
   totalreferralBalance: number;
-  
 }
-
-
 
 interface NftResponse {
   nft_id: number;
@@ -65,10 +69,6 @@ interface UserNftResponse {
 interface EnergyResponse {
   current: number;
   max: number;
-}
-
-interface BalanceResponse {
-  balance: number;
 }
 
 interface EnergyResponse {
@@ -133,7 +133,7 @@ export class AuthService {
     return this.http.post<any>(`${AuthService.API_URL}task/`, { task_id: taskId }, { headers: AuthService.headers }).pipe(
       tap(response => {
         const currentTasks = this.tasksSubject.value;
-        const updatedTasks = currentTasks.map(task => 
+        const updatedTasks = currentTasks.map(task =>
           task.task_id === taskId ? { ...task, completed: true } : task
         );
         this.tasksSubject.next(updatedTasks);
@@ -311,7 +311,7 @@ export class AuthService {
         catchError(this.handleError)
       );
   }
-  
+
   updateEnergy(energy: number) {
     this.energySubject.next(energy);
   }
@@ -335,7 +335,7 @@ export class AuthService {
         catchError(this.handleError)
       );
   }
-  
+
   getLeaderboardReferrals(): Observable<LeaderboardResponse> {
     return this.http.get<LeaderboardResponse>(`${AuthService.API_URL}home/leader-board-referrals`, { headers: AuthService.headers })
       .pipe(
@@ -343,7 +343,7 @@ export class AuthService {
         catchError(this.handleError)
       );
   }
-  
+
   getLeaderboardSpentNFT(): Observable<LeaderboardResponse> {
     return this.http.get<LeaderboardResponse>(`${AuthService.API_URL}home/leader-board-spent-nft`, { headers: AuthService.headers })
       .pipe(

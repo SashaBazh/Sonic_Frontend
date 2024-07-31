@@ -22,6 +22,14 @@
                 <span class="text">$ Buy Bitcoin</span>
             </div>
         </div>
+        <div class="scrolling-container">
+            <div class="scrolling-text">
+                <img src="../../../assets/images/Sonic-pulling.gif" alt="Sonic pulling">
+                <a href="https://hpos10i.com/" target="_blank" rel="noopener noreferrer">THE PEOPLE'S BITCOIN</a>
+                <img src="../../../assets/images/Sonic2SonicPushFinal.gif" alt="Sonic pushing"
+                    style="transform: scaleX(-1);">
+            </div>
+        </div>
         <div class="home_energy_bar_container">
             <div class="home_energy_bar_background"></div>
             <div class="home_energy_bar_progress" [style.width.%]="energyPercentage"></div>
@@ -37,9 +45,7 @@
             <div class="home_autoclicker_container">
                 <div class="autoclicker_left">
                     <label class="home_toggle_switch" [class.disabled]="!autoClickerAvailable">
-                        <input type="checkbox"
-                               [checked]="autoClickerEnabled"
-                               (click)="toggleAutoClicker($event)">
+                        <input type="checkbox" [checked]="autoClickerEnabled" (click)="toggleAutoClicker($event)">
                         <span class="home_slider"></span>
                     </label>
                 </div>
@@ -47,7 +53,7 @@
             </div>
             <div class="home_leaderboard_container">
                 <img src="../../../assets/images/icons/trophy.png" alt="Leaderboard" class="leaderboard_icon"
-                     (click)="openLeaderboardModal($event)">
+                    (click)="openLeaderboardModal($event)">
             </div>
             <div class="home_nft_container" (touchstart)="onTap($event)" (mousedown)="onTap($event)">
                 <div class="home_blur_circle home_blur_circle_1"></div>
@@ -112,18 +118,18 @@
             Unable to fetch current price
         </p>
         <h2 class="new-modal-title">Buy in:</h2>
-        <a (click)="openLink('https://coinmarketcap.com/exchanges/uniswap-v2/')"
+        <a (click)="openLink('https://app.uniswap.org/swap/')"
             class="new-modal-button new-modal-button-referral">
             <img src="https://cryptologos.cc/logos/uniswap-uni-logo.png" alt="Uniswap Logo" class="exchange-logo">
             UNISWAP
         </a>
-        <a (click)="openLink('https://www.mexc.com/exchange/HARRY_USDT')"
+        <a (click)="openLink('https://www.mexc.com/ru-RU/exchange/HARRY_USDT')"
             class="new-modal-button new-modal-button-referral">
             <img src="https://i.pinimg.com/736x/12/ce/27/12ce27c82fade533d279ba16655fa61f.jpg" alt="MEXC Logo"
                 class="exchange-logo">
             MEXC
         </a>
-        <a (click)="openLink('https://www.lbank.com/trade/bitcoin_usdt')"
+        <a (click)="openLink('https://www.lbank.com/ru/trade/bitcoin_usdt')"
             class="new-modal-button new-modal-button-referral">
             <img src="https://cdn.worldvectorlogo.com/logos/lbank-2.svg" alt="LBank Logo" class="exchange-logo">
             LBANK

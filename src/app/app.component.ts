@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from './services/auth.service';
+import { Component } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { LoadingService } from './services/loading.service';
+import { TelegramService } from './services/telegram.service';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +9,7 @@ import { LoadingService } from './services/loading.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  constructor(private router: Router, private loadingService: LoadingService) {
+  constructor(private router: Router, private loadingService: LoadingService, private telegramService: TelegramService) {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         if (event.url !== '/') {
@@ -17,5 +17,13 @@ export class AppComponent {
         }
       }
     });
+  }
+
+  ngOnInit() {
+    this.telegramService.expandApp();
+  }
+
+  expandApp() {
+    this.telegramService.expandApp();
   }
 }

@@ -7,27 +7,24 @@
     -ms-user-select: none;
 }
 
-html,
 body {
-    height: 100%;
     margin: 0;
     padding: 0;
-}
-
-body {
     overflow-y: auto;
     overflow-x: hidden;
     overflow-y: auto;
     overflow-x: auto;
-    max-width: 450px;
-    min-width: 380px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    min-width: 370px;
 }
 
 .single_container {
     margin: 3px auto;
     width: 90%;
     margin-top: 11px;
-
 }
 
 /* MAIN_CONTAINER //////////////////////////////////////////////////////////////////////////////////////*/
@@ -202,6 +199,7 @@ body {
 }
 
 /* FOOTER //////////////////////////////////////////////////////////////////////////////////////////*/
+
 .main_footer {
     position: fixed;
     bottom: 0;
@@ -292,50 +290,4 @@ body {
 .main_footer_icon_text {
     font-size: 10px;
     margin-top: 5px;
-}
-
-/* MEDIA_QUERY //////////////////////////////////////////////////////////////////////////////////////////*/
-
-@media (max-width: 420px) {
-    .team_info_header {
-        font-size: 12px;
-    }
-
-    .center-div0 .icon {
-        width: 15px;
-        height: 15px;
-    }
-}
-
-@media (max-width: 380px) {
-    .team_info_header {
-        font-size: 10px;
-    }
-
-    .info_balance .icon {
-        width: 13px;
-        height: 13px;
-    }
-}
-
-@media (max-width: 370px) {
-    .team_info_header {
-        font-size: 9px;
-    }
-
-    .info_balance .icon {
-        width: 11px;
-        height: 11px;
-    }
-}
-
-@media (max-width: 360px) {
-    .team_info_header {
-        font-size: 7px;
-    }
-
-    .info_balance .icon {
-        width: 10px;
-        height: 10px;
-    }
 }

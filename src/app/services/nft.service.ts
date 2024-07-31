@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { tap, retry} from 'rxjs/operators';
+import { tap, retry } from 'rxjs/operators';
 
 interface NftResponse {
   nft_id: number;
@@ -33,9 +33,13 @@ export class NftService {
 
   constructor(private http: HttpClient) { }
 
+  // ПОЛУЧЕНИЕ С БЭКА ИНФУ О ДОСТУПНЫХ NFT //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   getAvailableNfts(): Observable<any> {
     return this.http.get(`${this.API_URL}nft/available`, { headers: NftService.headers });
   }
+
+  // ПОЛУЧЕНИЕ С БЭКА ИНФУ О ТЕКУЩЕЙ NFT ЮЗЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getCurrentNft(): Observable<UserNftResponse> {
     return this.http.get<UserNftResponse>(`${this.API_URL}nft/my`, { headers: NftService.headers })

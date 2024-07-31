@@ -1,9 +1,10 @@
 import { ElementRef } from '@angular/core';
 import { GameComponentInterface } from '../app/services/interfaces';
-// import { AuthService } from '../app/services/auth.service';
 import { GameService } from '../app/services/game.service';
 
 import { getScorePerTap, DEFAULT_NFT } from './home.functions';
+
+// ИНИЦИАЛИЗАЦИЯ ИГРЫ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function initGame(component: GameComponentInterface, sonicElement: ElementRef, updateScore: () => void, updateGroundPosition: () => void) {
     component.score = 0;
@@ -19,6 +20,8 @@ export function initGame(component: GameComponentInterface, sonicElement: Elemen
     updateScore();
     updateGroundPosition();
 }
+
+// СОЗДАНИЕ ОБЬЕКТОВ НА КАРТЕ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function createObstacle(gameElement: ElementRef, sonicElement: ElementRef, isGameOver: boolean) {
     if (isGameOver) return;
@@ -49,6 +52,7 @@ export function createObstacle(gameElement: ElementRef, sonicElement: ElementRef
     gameElement.nativeElement.appendChild(obstacle);
 }
 
+//  СОЗДАНИЕ МОНЕТ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export function createCoin(gameElement: ElementRef, sonicElement: ElementRef, isGameOver: boolean) {
 
     if (isGameOver) return;
@@ -71,34 +75,38 @@ export function createCoin(gameElement: ElementRef, sonicElement: ElementRef, is
     gameElement.nativeElement.appendChild(coin);
 }
 
+// ДВИЖЕНИЕ ЭЛЕМЕНТОВ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function moveElements(component: GameComponentInterface, gameElement: ElementRef, sonicElement: ElementRef, updateScore: () => void): boolean | null {
     const elements = gameElement.nativeElement.querySelectorAll('.obstacle, .coin');
-    
+
     for (const element of elements) {
-      const elementLeft = parseFloat(element.style.left);
-      if (elementLeft > -10) {
-        element.style.left = `${elementLeft - component.gameSpeed}%`;
-      } else {
-        element.remove();
-      }
-  
-      if (checkCollision(sonicElement.nativeElement, element)) {
-        if (element.classList.contains('coin')) {
-          component.collectedCoins++;
-          component.score += component.points;
-          updateScore();
-          element.remove();
-          if (component.collectedCoins >= component.maxCoins) {
-            return true; // Game over (win)
-          }
+        const elementLeft = parseFloat(element.style.left);
+        if (elementLeft > -10) {
+            element.style.left = `${elementLeft - component.gameSpeed}%`;
         } else {
-          return false; // Game over (lose)
+            element.remove();
         }
-      }
+
+        if (checkCollision(sonicElement.nativeElement, element)) {
+            if (element.classList.contains('coin')) {
+                component.collectedCoins++;
+                component.score += component.points;
+                updateScore();
+                element.remove();
+                if (component.collectedCoins >= component.maxCoins) {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        }
     }
-    
-    return null; // Game continues
-  }
+
+    return null;
+}
+
+// ОПРЕДЕЛЕНИЕ ПРЕПЯТСТВИЯ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function checkCollision(a: HTMLElement, b: HTMLElement) {
     const aRect = a.getBoundingClientRect();
@@ -107,6 +115,8 @@ export function checkCollision(a: HTMLElement, b: HTMLElement) {
         aRect.right < bRect.left || aRect.left > bRect.right);
 }
 
+// ДВИЖЕНИЕ ТРАВЫ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function moveGround(component: GameComponentInterface, ground: ElementRef) {
     component.groundPosition -= component.gameSpeed * 3;
     if (component.groundPosition <= -window.innerWidth) {
@@ -114,6 +124,8 @@ export function moveGround(component: GameComponentInterface, ground: ElementRef
     }
     ground.nativeElement.style.backgroundPositionX = `${component.groundPosition}px`;
 }
+
+// ДВИЖЕНИЕ ЭЛЕМЕНТОВ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function gameOver(component: GameComponentInterface, authService: GameService, finalScoreDisplay: ElementRef, gameOverModal: ElementRef, isWin: boolean) {
     component.isGameOver = true;
@@ -137,6 +149,8 @@ export function gameOver(component: GameComponentInterface, authService: GameSer
     );
 }
 
+// ПРЫЖОК  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function jump(component: GameComponentInterface, sonicElement: ElementRef) {
     if (!component.isJumping && !component.isGameOver) {
         component.isJumping = true;
@@ -158,6 +172,8 @@ export function jump(component: GameComponentInterface, sonicElement: ElementRef
     }
 }
 
+// АНИМАЦИЯ СОНИКА  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function animateSonic(component: GameComponentInterface, sonicElement: ElementRef) {
     component.frameCount++;
     if (component.frameCount % component.animationSpeed === 0) {
@@ -167,6 +183,8 @@ export function animateSonic(component: GameComponentInterface, sonicElement: El
         }
     }
 }
+
+// ПОДГРУЗКА ИЗОБРАЖЕНИЙ ИЗ КЭША  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function preloadImages(component: GameComponentInterface) {
     component.sonicFrames.forEach((src, index) => {
@@ -182,6 +200,8 @@ export function preloadImages(component: GameComponentInterface) {
     });
 }
 
+// ИНИЦИАЛИЗАЦИЯ СОНИКА  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function initSonicElements(component: GameComponentInterface, sonicElement: ElementRef) {
     component.currentSonicElement.style.position = 'absolute';
     component.nextSonicElement.style.position = 'absolute';
@@ -191,6 +211,8 @@ export function initSonicElements(component: GameComponentInterface, sonicElemen
     sonicElement.nativeElement.appendChild(component.nextSonicElement);
 }
 
+// ВРОДЕ КАК ЗАПУСК ВСЕГО ДВИЖЕНИЯ НА КАРТЕ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function gameLoop(component: GameComponentInterface, gameElement: ElementRef, sonicElement: ElementRef, ground: ElementRef, updateScore: () => void): void {
     if (component.isGameOver) return;
 
@@ -199,7 +221,7 @@ export function gameLoop(component: GameComponentInterface, gameElement: Element
         component.isGameOver = true;
         return;
     }
-    
+
     moveGround(component, ground);
     animateSonic(component, sonicElement);
 

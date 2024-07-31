@@ -7,7 +7,7 @@ interface Task {
   name: string;
   award: number;
   condition: string;
-  image_uri?: string;
+  image_uri: string;
   description?: string;  
   completed?: boolean;
   loading?: boolean;    
@@ -19,8 +19,10 @@ interface Task {
   styleUrl: './quest.component.css',
   encapsulation: ViewEncapsulation.None,
 })
-export class QuestComponent {
 
+
+export class QuestComponent {
+  isLoading = true;
   tasks: Task[] = [];
   selectedTask: Task | null = null;
 
@@ -39,7 +41,12 @@ export class QuestComponent {
     this.taskService.getAvailableTasks().subscribe(
       tasks => {
         this.tasks = tasks.map(task => ({...task, loading: false}));
+        this.isLoading = false;
       },
+      error => {
+        console.error('Error loading tasks:', error);
+        this.isLoading = false;
+      }
     );
   }
 

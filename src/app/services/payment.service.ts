@@ -1,7 +1,7 @@
 // payment.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { NftService } from './nft.service';
 
 interface CreatePaymentRequest {
@@ -38,24 +38,34 @@ interface CancelPaymentResponse {
 export class PaymentService {
   private apiUrl = 'https://harrypotterobamasonic.com/api/';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
+
+  // ПОЛУЧЕНИЕ С БЭКА ИНФУ О СОЗДАНИИ ОПЛАТЫ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   createPayment(nftId: number, currency: string): Observable<CreatePaymentResponse> {
     const request: CreatePaymentRequest = { nft_id: nftId, currency: currency };
     return this.http.post<CreatePaymentResponse>(`${this.apiUrl}payment/create`, request, { headers: PaymentService.headers });
   }
 
+  // ПОЛУЧЕНИЕ С БЭКА ИНФУ О ПРОВЕРКЕ ОПЛАТЫ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   checkPayment(paymentId: number): Observable<CheckPaymentResponse> {
     return this.http.get<CheckPaymentResponse>(`${this.apiUrl}payment/check/${paymentId}`, { headers: PaymentService.headers });
   }
+
+  // ПОЛУЧЕНИЕ С БЭКА ИНФУ О СИМУЛЯЦИИ ОПЛАТЫ ВРОДЕ КАК БОЛЬШЕ НЕ ЮЗАЕТСЯ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   simulatePayment(paymentId: number): Observable<SimulatePaymentResponse> {
     return this.http.post<SimulatePaymentResponse>(`${this.apiUrl}payment/simulate-payment/${paymentId}`, {}, { headers: PaymentService.headers });
   }
 
+  // ПОЛУЧЕНИЕ С БЭКА ИНФУ ОБ ОТМЕНЕ ОПЛАТЫ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   cancelPayment(paymentId: number): Observable<CancelPaymentResponse> {
     return this.http.delete<CancelPaymentResponse>(`${this.apiUrl}payment/cancel/${paymentId}`, { headers: PaymentService.headers });
   }
+
+  // ПОЛУЧЕНИЕ С БЭКА ИНФУ О ДОСТУПНЫХ ВАЛЮТАХ ДЛЯ ОПЛАТЫ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getSupportedCurrencies(): Observable<string[]> {
     return this.http.get<{ currencies: string[] }>(`${this.apiUrl}payment/supported-currencies`, { headers: NftService.headers })
@@ -64,21 +74,34 @@ export class PaymentService {
       );
   }
 
-
   private APIURL = 'https://api.coingecko.com/api/v3';
 
+  // ПОЛУЧЕНИЕ С COINGECO ИНФУ О ТЕКУЩЕЙ ЦЕНЕ ТОКЕНА  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  private priceCache: { [key: string]: { price: number, timestamp: number } } = {};
+  private CACHE_DURATION = 60000; // 1 минута
 
   getPrice(coinId: string): Observable<number> {
+    const cachedData = this.priceCache[coinId];
+    if (cachedData && Date.now() - cachedData.timestamp < this.CACHE_DURATION) {
+      return of(cachedData.price);
+    }
+
     return this.http.get<any>(`${this.APIURL}/simple/price?ids=${coinId},harrypotterobamasonic10in&vs_currencies=usd`)
       .pipe(
         map(response => {
           const coinPrice = response[coinId].usd;
           const harryPrice = response['harrypotterobamasonic10in'].usd;
-          return harryPrice / coinPrice;
+          const price = harryPrice / coinPrice;
+          this.priceCache[coinId] = { price, timestamp: Date.now() };
+          return price;
+        }),
+        catchError(error => {
+          console.error('Error fetching price:', error);
+          return of(this.priceCache[coinId]?.price || 30000);
         })
       );
   }
-
 
   public static get headers(): HttpHeaders {
     const telegramInitData = (window as any).Telegram?.WebApp?.initData || '';

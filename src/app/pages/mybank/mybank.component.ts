@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, Renderer2, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, ViewChild, Renderer2, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError, Subscription } from 'rxjs';
@@ -7,6 +7,7 @@ import 'chartjs-adapter-date-fns';
 import { enUS } from 'date-fns/locale';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { AuthService } from '../../services/auth.service';
+import { TelegramService } from '../../services/telegram.service';
 
 Chart.register(...registerables, zoomPlugin);
 
@@ -30,6 +31,13 @@ export class MybankComponent implements OnInit, OnDestroy {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('myCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
+  @HostListener('document:touchstart', ['$event'])
+  onTouchStart(event: TouchEvent) {
+    if (this.modal && !this.modal.nativeElement.contains(event.target as Node)) {
+      this.closeKeyboard();
+    }
+  }
+  
   private resizeListener: (() => void) | null = null;
 
   withdrawAddress: string = '';
@@ -46,26 +54,26 @@ export class MybankComponent implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private http: HttpClient,
     private authService: AuthService,
+    private telegramService: TelegramService
     
   ) {
     this.authService.balance$.subscribe(balance => this.balance = balance);
     this.authService.referralBalance$.subscribe(balance => this.referralBalance = balance);
   }
 
+  closeKeyboard() {
+    const tmp = document.createElement('input');
+    document.body.appendChild(tmp);
+    tmp.focus();
+    document.body.removeChild(tmp);
+    const inputs = this.modal.nativeElement.querySelectorAll('input');
+    inputs.forEach((input: HTMLInputElement) => input.blur());
+  }
+
   ngOnInit() {
     this.getBalance();
     this.getReferalBalance();
     this.fetchChartData('30');
-  }
-
-  ngAfterViewInit() {
-    // this.adjustCanvasWidth();
-    // this.resizeListener = this.renderer.listen('window', 'resize', () => this.adjustCanvasWidth());
-    // this.modal.nativeElement.addEventListener('touchstart', (e: TouchEvent) => {
-    //   if (e.target === this.modal.nativeElement) {
-    //     document.activeElement.blur();
-    //   }
-    // });
   }
 
   adjustCanvasWidth() {
@@ -77,7 +85,6 @@ export class MybankComponent implements OnInit, OnDestroy {
       this.renderer.setStyle(canvas, 'width', `${containerWidth - 2}px`);
     }
   }
-
 
   getBalance() {
     this.authService.getUserBalance().subscribe(
@@ -97,7 +104,6 @@ export class MybankComponent implements OnInit, OnDestroy {
 
   fetchCurrentPrice() {
     const apiUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=harrypotterobamasonic10in&vs_currencies=usd,btc,eth&include_24hr_change=true';
-
     this.http.get(apiUrl).subscribe(
       (data: any) => {
         const coinData = data['harrypotterobamasonic10in'];
@@ -107,7 +113,6 @@ export class MybankComponent implements OnInit, OnDestroy {
     );
   }
   
-
   fetchChartData(range: string) {
     let interval: string;
     let days: string = range;
@@ -418,12 +423,6 @@ export class MybankComponent implements OnInit, OnDestroy {
     }
   }
 
-  closeKeyboard() {
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
-  }
-
   checkAddress() {
     this.isAddressValid = this.withdrawAddress.trim().length > 0;
   }
@@ -439,16 +438,21 @@ export class MybankComponent implements OnInit, OnDestroy {
         withdraw_amount: this.withdrawAmount,
         withdraw_address: this.withdrawAddress
       };
+
+      if (this.telegramService.isTelegramWebAppAvailable()) {
+        this.telegramService.showAlert('Expect payment within 24 hours while we review your transaction');
+      } else {
+        console.warn('Telegram WebApp is not available');
+      }
   
       this.authService.withdrawFunds(withdrawData).subscribe(
         (response) => {
           console.log('Withdrawal successful', response);
           this.closeModal();
-          this.getReferalBalance(); // Обновляем баланс после успешного вывода
+          this.getReferalBalance();
         },
         (error) => {
           console.error('Withdrawal failed', error);
-          // Здесь можно добавить обработку ошибки, например, показать уведомление пользователю
         }
       );
     }
@@ -461,9 +465,8 @@ export class MybankComponent implements OnInit, OnDestroy {
     if (this.chartDataSubscription) {
       this.chartDataSubscription.unsubscribe();
     }
-    if (this.resizeListener) {
+    if (typeof this.resizeListener === 'function') {
       this.resizeListener();
     }
-
   }
 }
