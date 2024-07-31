@@ -26,10 +26,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('leaderboardModal') leaderboardModal!: ElementRef;
   @ViewChild('leaderboardOverlay') leaderboardOverlay!: ElementRef;
 
-  autoClickerEnabled: boolean = false;
-  autoClickerAvailable: boolean = false;
-  private autoClickerSubscription: Subscription | null = null;
-
   maxTaps: number = 0;
   energyPercentage: number = 0;
   cachedNft: CachedNft = HomeFunctions.DEFAULT_CACHED_NFT;
@@ -53,6 +49,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   skins: Skin[] = HomeFunctions.SKINS;
   selectedSkin: Skin;
 
+  autoClickerEnabled: boolean = false;
+  private autoClickerSubscription: Subscription | null = null;
+
   constructor(
     private homeService: HomeService,
     private router: Router,
@@ -75,6 +74,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.updateEnergyPercentage();
     });
 
+    this.checkAutoClickerStatus();
+
     this.homeService.initializeUserData().pipe(
       take(1)
     ).subscribe(() => {
@@ -89,7 +90,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     HomeFunctions.initializeComponent(this, this.homeService);
     HomeFunctions.preloadImages(this.skins);
     HomeFunctions.animateNumbers(this);
-    this.checkAutoClickerStatus();
   }
 
   updateCurrentPrice() {
@@ -103,15 +103,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.homeService.getAutoClickerStatus().subscribe(
       (status: AutoClickerStatus) => {
         this.autoClickerEnabled = status.is_active;
-        this.autoClickerAvailable = status.is_available;
         if (this.autoClickerEnabled) {
           this.startAutoClickerProcess();
         }
       },
       error => {
         console.error('Error getting auto-clicker status:', error);
-        this.autoClickerAvailable = false;
-        this.autoClickerEnabled = false;
       }
     );
   }
@@ -120,26 +117,25 @@ export class HomeComponent implements OnInit, OnDestroy {
     event.preventDefault();
     event.stopPropagation();
 
-    if (!this.autoClickerAvailable) {
-      if (this.telegramService.isTelegramWebAppAvailable()) {
-        this.telegramService.showAlert('Auto-clicker is not available. You need to own the two most expensive NFTs to use it.');
-      } else {
-        console.warn('Telegram WebApp is not available');
-      }
+    if (this.autoClickerEnabled) {
       return;
     }
 
     this.homeService.toggleAutoClicker().subscribe(
       (response) => {
-        this.autoClickerEnabled = !this.autoClickerEnabled;
-        if (this.autoClickerEnabled) {
-          this.startAutoClickerProcess();
-        } else {
-          this.stopAutoClickerProcess();
-        }
+        this.autoClickerEnabled = true;
+        this.startAutoClickerProcess();
       },
       (error) => {
-        console.error('Error toggling auto-clicker:', error);
+        if (error.status === 403) {
+          // Handle 403 error
+        } else {
+          if (this.telegramService.isTelegramWebAppAvailable()) {
+            this.telegramService.showAlert('You need to own one of the two most expensive NFTs to use the auto-clicker');
+          } else {
+            console.warn('Telegram WebApp is not available');
+          }
+        }
       }
     );
   }
@@ -157,16 +153,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  private stopAutoClickerProcess() {
-    if (this.autoClickerSubscription) {
-      this.autoClickerSubscription.unsubscribe();
-      this.autoClickerSubscription = null;
-    }
-  }
-
   ngOnDestroy() {
     HomeFunctions.cleanupComponent(this);
-    this.stopAutoClickerProcess();
+    if (this.autoClickerSubscription) {
+      this.autoClickerSubscription.unsubscribe();
+    }
 
   }
 

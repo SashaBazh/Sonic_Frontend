@@ -279,26 +279,14 @@ export class HomeService {
 
   // ХУЙНЯ ДЛЯ АВТОКЛИКЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  processAutoClicker(): Observable<any> {
-    return this.http.post<{ clicks_added: number }>(`${HomeService.API_URL}home/auto-clicker/process`, {}, { headers: HomeService.headers });
-  }
-
-  startAutoClickerProcess(): Observable<any> {
-    return interval(60000).pipe(
-      switchMap(() => this.processAutoClicker())
-    );
-  }
-
   toggleAutoClicker(): Observable<any> {
     return this.http.post(`${HomeService.API_URL}home/auto-clicker/activate`, {}, { headers: HomeService.headers }).pipe(
-      tap(response => {
-      }),
       catchError(error => {
         if (error.status === 403) {
-
+          return throwError(() => new Error("y"));
         } else {
+          return throwError(() => error);
         }
-        return throwError(() => error);
       })
     );
   }
@@ -307,6 +295,16 @@ export class HomeService {
     return this.http.get<AutoClickerStatus>(`${HomeService.API_URL}home/auto-clicker/status`, { headers: HomeService.headers }).pipe(
       catchError(this.handleError)
     );
+  }
+
+  startAutoClickerProcess(): Observable<any> {
+    return interval(60000).pipe(
+      switchMap(() => this.processAutoClicker())
+    );
+  }
+
+  private processAutoClicker(): Observable<any> {
+    return this.http.post<{ clicks_added: number }>(`${HomeService.API_URL}home/auto-clicker/process`, {}, { headers: HomeService.headers });
   }
 
   public static get headers(): HttpHeaders {

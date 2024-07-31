@@ -216,10 +216,9 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #017AFF;
+    background-color: #ccc; /* Серый фон для выключенного состояния */
     transition: .4s;
     border-radius: 24px;
-    border: 1px solid #017AFF;
 }
 
 .home_slider:before {
@@ -228,8 +227,8 @@ body {
     height: 20px;
     width: 20px;
     left: 2px;
-    bottom: 1px;
-    background-color: rgb(221, 221, 221);
+    bottom: 2px;
+    background-color: white; /* Белый кружок для выключенного состояния */
     transition: .4s;
     border-radius: 50%;
 }
@@ -279,6 +278,83 @@ input:checked+.home_slider:before {
     font-size: 0.9em;
     margin-top: 5px;
 }
+
+
+
+
+
+
+
+
+
+
+
+.home_toggle_switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.home_slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc; /* Серый фон для выключенного состояния */
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.home_slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white; /* Белый кружок для выключенного состояния */
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.home_toggle_switch.active .home_slider {
+    background-color: #017AFF; /* Синий фон для включенного состояния */
+}
+
+.home_toggle_switch.active .home_slider:before {
+    transform: translateX(26px);
+    background-color: #e0e0e0; /* Немного сероватый кружок для включенного состояния */
+}
+
+input:checked + .home_slider {
+    background-color: #017AFF;
+}
+
+input:checked + .home_slider:before {
+    transform: translateX(26px);
+    background-color: #e0e0e0;
+}
+
+.home_toggle_switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* NFT_CONTANIER //////////////////////////////////////////////////////////////////////////////////////*/
 

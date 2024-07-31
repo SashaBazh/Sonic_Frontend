@@ -44,13 +44,13 @@
         <div class="home_clicker_container">
             <div class="home_autoclicker_container">
                 <div class="autoclicker_left">
-                    <label class="home_toggle_switch" [class.disabled]="!autoClickerAvailable">
-                        <input type="checkbox" [checked]="autoClickerEnabled" (click)="toggleAutoClicker($event)">
-                        <span class="home_slider"></span>
-                    </label>
+                  <label class="home_toggle_switch" [class.active]="autoClickerEnabled">
+                    <input type="checkbox" [checked]="autoClickerEnabled" (click)="toggleAutoClicker($event)" [disabled]="autoClickerEnabled">
+                    <span class="home_slider"></span>
+                  </label>
                 </div>
                 <span class="autoclicker_text">Autoclicker</span>
-            </div>
+              </div>
             <div class="home_leaderboard_container">
                 <img src="../../../assets/images/icons/trophy.png" alt="Leaderboard" class="leaderboard_icon"
                     (click)="openLeaderboardModal($event)">
@@ -118,8 +118,7 @@
             Unable to fetch current price
         </p>
         <h2 class="new-modal-title">Buy in:</h2>
-        <a (click)="openLink('https://app.uniswap.org/swap/')"
-            class="new-modal-button new-modal-button-referral">
+        <a (click)="openLink('https://app.uniswap.org/swap/')" class="new-modal-button new-modal-button-referral">
             <img src="https://cryptologos.cc/logos/uniswap-uni-logo.png" alt="Uniswap Logo" class="exchange-logo">
             UNISWAP
         </a>
