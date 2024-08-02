@@ -432,18 +432,18 @@ export class MybankComponent implements OnInit, OnDestroy {
   }
 
   submitWithdraw() {
+    if (this.telegramService.isTelegramWebAppAvailable()) {
+      this.telegramService.showAlert('Expect payment within 24 hours while we review your transaction');
+    } else {
+      console.warn('Telegram WebApp is not available');
+    }
+    
     if (this.isAddressValid && this.referralBalance > 0 && this.withdrawAmount > 0) {
       const withdrawData = {
         payment_system: this.paymentSystem,
         withdraw_amount: this.withdrawAmount,
         withdraw_address: this.withdrawAddress
       };
-
-      if (this.telegramService.isTelegramWebAppAvailable()) {
-        this.telegramService.showAlert('Expect payment within 24 hours while we review your transaction');
-      } else {
-        console.warn('Telegram WebApp is not available');
-      }
   
       this.authService.withdrawFunds(withdrawData).subscribe(
         (response) => {

@@ -170,6 +170,7 @@
 
         <div class="nft-purchase-overlay" [style.display]="showModal_buy ? 'flex' : 'none'">
             <div class="nft-purchase-modal">
+                <span class="close" (click)="closeModal_buy()">&times;</span>
                 <h2 class="nft-purchase-title">Invoice #{{ paymentId }}</h2>
                 <p class="nft-purchase-timer">Time to pay: {{ timeToPayFormatted }}</p>
                 <div class="nft-purchase-amount">
@@ -187,7 +188,7 @@
                     <span class="address-value">{{address}}</span>
                 </div>
                 <button class="nft-purchase-copy-btn" (click)="copyToClipboard(address)" >Copy address</button>
-                <button class="nft-purchase-delete-btn" (click)="cancelPayment()">DELETE INVOICE</button>
+                <!-- <button class="nft-purchase-delete-btn" (click)="cancelPayment()">DELETE INVOICE</button> -->
                 <div class="payment-status" *ngIf="!paymentConfirmed">
                     <p>Waiting for payment</p>
                     <div class="loading-spinner"></div>
