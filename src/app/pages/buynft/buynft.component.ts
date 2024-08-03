@@ -85,6 +85,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   paymentDetails: any;
   isLoading: boolean | undefined;
   isLoadingPrice: boolean = true;
+  now = new Date(new Date().toUTCString());
 
   originalPrice: number = 0;
 
@@ -224,6 +225,22 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isQRCodeLoading = true;
         this.paymentService.createPayment(this.selectedNFT.nft_id, 'harrypotterobamasonic10inu').subscribe(
           async (response) => {
+            const currentDate = new Date();
+            const formattedCurrentDate = currentDate.toISOString().replace('T', ' ').substr(0, 19);
+            
+  //           const message = `
+  // Текущая дата и время: ${formattedCurrentDate}
+  // Идентификатор платежа: ${response.payment_id}
+  // Адрес для оплаты: ${response.pay_address}
+  // Сумма к оплате: ${response.pay_amount} ${response.pay_currency}
+  // Срок действия: ${response.expires_at}
+  // `;
+  
+  //           alert(message);
+            
+            // Остальной код остается без изменений
+            this.expiresAt = new Date(response.expires_at.replace('T', 'T'));
+            
             this.paymentId = response.payment_id;
             this.address = response.pay_address;
             this.qrCodeUrl = await this.generateQRCode();
@@ -232,6 +249,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   
             this.paymentDetails = response;
   
+            this.startPaymentTimer();
             this.startPaymentCheck();
             this.isCheckingPayment = false;
             this.isQRCodeLoading = false;
@@ -244,6 +262,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
         );
       }
     } else if (this.buyOption === 'star') {
+      // Обработка для опции 'star'
     }
   }
 
@@ -306,7 +325,6 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openModal_buy() {
     this.showModal_buy = true;
-    this.startPaymentTimer();
   }
 
   closeModal_buy() {
@@ -346,21 +364,40 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private expiresAt: Date | undefined;
+  
   private startPaymentTimer() {
     this.stopPaymentTimer();
-    let timeLeft = 3600;
-    this.updateTimerDisplay(timeLeft);
-
+    if (!this.expiresAt) return;
+  
     this.timer = interval(1000).subscribe(() => {
-      timeLeft--;
+      const now = new Date();
+      
+      // Получаем текущее время в UTC
+      const nowUtc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+      
+      const timeLeft = Math.max(0, Math.floor((this.expiresAt!.getTime() - nowUtc.getTime()) / 1000));
+      
+      // alert(this.expiresAt!.toISOString());
+      // alert(nowUtc.toISOString());
+      // alert(timeLeft);
+  
       if (timeLeft <= 0) {
         this.stopPaymentTimer();
-        this.closeModal_buy();
+        // this.handleExpiredPayment();
       } else {
-        this.updateTimerDisplay(timeLeft);
+        this.timeToPayFormatted = this.formatTimeLeft(timeLeft);
       }
     });
   }
+  
+  private formatTimeLeft(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+ 
 
   private stopPaymentTimer() {
     if (this.timer) {
@@ -369,11 +406,27 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private updateTimerDisplay(timeLeft: number) {
-    const hours = Math.floor(timeLeft / 3600);
-    const minutes = Math.floor((timeLeft % 3600) / 60);
-    const seconds = timeLeft % 60;
-    this.timeToPayFormatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  // private updateTimerDisplay(timeLeft: number) {
+  //   const hours = Math.floor(timeLeft / 3600);
+  //   const minutes = Math.floor((timeLeft % 3600) / 60);
+  //   const seconds = timeLeft % 60;
+  //   this.timeToPayFormatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  // }
+
+  private handleExpiredPayment() {
+    if (this.paymentId) {
+      this.paymentService.cancelPayment(this.paymentId).subscribe(
+        (response) => {
+          console.log('Payment cancelled:', response);
+          // Дополнительные действия после отмены платежа (например, показать сообщение пользователю)
+        },
+        (error) => {
+          console.error('Error cancelling payment:', error);
+        }
+      );
+    }
+    // Закрыть модальное окно или выполнить другие необходимые действия
+    this.closeModal_buy();
   }
 
   copyToClipboard(text: string) {

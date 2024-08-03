@@ -129,75 +129,55 @@ export const getScorePerTap = (currentNft: any) => {
 
 // ТАП //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function handleTap(component: any, event: TouchEvent | MouseEvent, homeService: HomeService, telegramService: TelegramService) {
+export function handleTapVisuals(component: any, event: TouchEvent | MouseEvent) {
     const currentNft = component.cachedNft.nft || DEFAULT_NFT;
-    if (component.energy > 0) {
-        if ('vibrate' in navigator) {
-            try {
-                navigator.vibrate(100);
-            } catch (error) {
-            }
-        } else {
-        }
-        component.currentImage = component.currentImage === component.selectedSkin.image1
-            ? component.selectedSkin.image2
-            : component.selectedSkin.image1;
-
-        let touches: Touch[] = [];
-        if (event instanceof TouchEvent) {
-            touches = Array.from(event.touches);
-        } else {
-            touches = [{ clientX: event.clientX, clientY: event.clientY } as Touch];
-        }
-
-        touches.forEach(touch => {
-            const scorePerTap = currentNft.score_per_tap;
-            component.numbers.push(
-                {
-                    x: touch.clientX - 15,
-                    y: touch.clientY - 30,
-                    value: 'coin',
-                    isNumber: false,
-                    velocityY: -5
-                },
-                {
-                    x: touch.clientX + 15,
-                    y: touch.clientY - 30,
-                    value: scorePerTap,
-                    isNumber: true,
-                    velocityY: -5
-                }
-            );
-
-            setTimeout(() => {
-                const index = component.numbers.findIndex((n: FloatingNumber) => n.x === touch.clientX - 15 && n.y === touch.clientY - 30);
-                if (index > -1) {
-                    component.numbers.splice(index, 2);
-                }
-            }, 1000);
-        });
-
-        homeService.click().subscribe(
-            newBalance => {
-                component.balance = newBalance;
-                component.energy -= currentNft.score_per_tap;
-                homeService.updateEnergy(component.energy);
-                component.updateEnergyPercentage();
-            },
-        );
+    
+    if ('vibrate' in navigator) {
+      try {
+        navigator.vibrate(100);
+      } catch (error) {
+        console.error('Failed to vibrate:', error);
+      }
     }
-    else {
-
-        if (telegramService.isTelegramWebAppAvailable()) {
-            telegramService.showAlert('You used up all your energy for today. It will replenish tomorrow.');
-        } else {
-            console.warn('Telegram WebApp is not available');
-        }
-
-
+    
+    component.currentImage = component.currentImage === component.selectedSkin.image1
+      ? component.selectedSkin.image2
+      : component.selectedSkin.image1;
+  
+    let touches: Touch[] = [];
+    if (event instanceof TouchEvent) {
+      touches = Array.from(event.touches);
+    } else {
+      touches = [{ clientX: event.clientX, clientY: event.clientY } as Touch];
     }
-
-}
+  
+    touches.forEach(touch => {
+      const scorePerTap = currentNft.score_per_tap;
+      component.numbers.push(
+        {
+          x: touch.clientX - 15,
+          y: touch.clientY - 30,
+          value: 'coin',
+          isNumber: false,
+          velocityY: -5
+        },
+        {
+          x: touch.clientX + 15,
+          y: touch.clientY - 30,
+          value: scorePerTap,
+          isNumber: true,
+          velocityY: -5
+        }
+      );
+  
+      setTimeout(() => {
+        const index = component.numbers.findIndex((n: FloatingNumber) => n.x === touch.clientX - 15 && n.y === touch.clientY - 30);
+        if (index > -1) {
+          component.numbers.splice(index, 2);
+        }
+      }, 1000);
+    });
+  }
 
 // АНИМАЦИЯ ЦИФР ПРИ ТАПАХ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

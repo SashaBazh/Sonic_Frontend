@@ -8,6 +8,7 @@ export class TelegramService {
   private window: any;
   private tg: any;
   private webApp: any;
+  platform?: string;
 
   
   constructor(@Inject(DOCUMENT) private _document: Document) {

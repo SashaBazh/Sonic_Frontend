@@ -22,6 +22,20 @@ interface ClickResponse {
   clicks: number;
 }
 
+interface ClickBatch {
+  clicks: number;
+  timestamp: number;
+  current_client_balance: number;
+}
+
+interface ClickResponse {
+  validated_clicks: number;
+  new_balance: number;
+  clicks_left: number;
+  max_daily_clicks: number;
+  next_reset: string;
+}
+
 interface UserResponse {
   user_id: number;
   telegram_id: number;
@@ -225,11 +239,27 @@ export class HomeService {
     return this.http.post<ClickResponse>(`${HomeService.API_URL}home/click`, {}, { headers: HomeService.headers }).pipe(
       map(response => response.clicks),
       tap(clicks => {
-        console.log('Click registered successfully:', clicks);
+        // alert(`Click registered successfully: ${clicks}`);
         this.updateBalance(clicks);
       }),
       retry(3),
-      catchError(this.handleError)
+      catchError(error => {
+        // alert(`Error registering click: ${JSON.stringify(error)}`);
+        return this.handleError(error);
+      })
+    );
+  }
+  
+  sendClickBatch(clickBatch: ClickBatch): Observable<ClickResponse> {
+    // alert(`Sending click batch: ${JSON.stringify(clickBatch)}`);
+    return this.http.post<ClickResponse>(`${HomeService.API_URL}home/click`, clickBatch, { headers: HomeService.headers }).pipe(
+      tap(response => {
+        // alert(`Click batch sent successfully: ${JSON.stringify(response)}`);
+      }),
+      catchError(error => {
+        // alert(`Error sending click batch: ${JSON.stringify(error)}`);
+        return this.handleError(error);
+      })
     );
   }
 

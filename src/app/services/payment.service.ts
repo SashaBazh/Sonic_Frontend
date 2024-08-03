@@ -14,6 +14,7 @@ interface CreatePaymentResponse {
   pay_address: string;
   pay_amount: number;
   pay_currency: string;
+  expires_at: string;
 }
 
 interface CheckPaymentResponse {

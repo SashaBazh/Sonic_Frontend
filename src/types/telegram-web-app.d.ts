@@ -1,4 +1,5 @@
 interface TelegramWebApp {
+    [x: string]: any;
     showAlert(message: string): void;
     initData?: string;
     // Добавьте другие методы и свойства, если необходимо

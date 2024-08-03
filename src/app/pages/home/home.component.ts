@@ -46,6 +46,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   showBuyBitcoinModal: boolean = false;
   currentUserId: string = '';
 
+  private clickCount = 0;
+  private firstClickTimestamp: number | null = null;
+  clientBalance = 1;
+  private balanceSubscription: Subscription | undefined;
+  
+  private clickSendInterval: any;
+
   skins: Skin[] = HomeFunctions.SKINS;
   selectedSkin: Skin;
 
@@ -64,6 +71,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.selectedSkin = this.skins[0];
     this.currentImage = this.selectedSkin.image1;
     this.homeService.balance$.subscribe(balance => this.balance = balance);
+    
   }
 
   ngOnInit() {
@@ -73,6 +81,12 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.energy = energy;
       this.updateEnergyPercentage();
     });
+
+    this.balanceSubscription = this.homeService.balance$.subscribe(balance => {
+      this.clientBalance = balance;
+    });
+
+    this.clickSendInterval = setInterval(() => this.sendClicks(), 5000);
 
     this.checkAutoClickerStatus();
 
@@ -159,11 +173,86 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.autoClickerSubscription.unsubscribe();
     }
 
+    if (this.clickSendInterval) {
+      clearInterval(this.clickSendInterval);
+    }
+
+    if (this.balanceSubscription) {
+      this.balanceSubscription.unsubscribe();
+    }
+
   }
 
   onTap(event: TouchEvent | MouseEvent) {
     event.preventDefault();
-    HomeFunctions.handleTap(this, event, this.homeService, this.telegramService);
+    if (this.energy > 0) {
+      if (this.clickCount === 0) {
+        this.firstClickTimestamp = Date.now() / 1000;
+      }
+      this.clickCount++;
+      
+      const scorePerTap = this.cachedNft?.nft?.score_per_tap || 1;
+      this.clientBalance += scorePerTap;
+      this.energy -= scorePerTap;
+      
+      this.updateUIWithPendingClicks();
+      HomeFunctions.handleTapVisuals(this, event);
+  
+      // Выводим информацию в alert
+      // const alertInfo = `
+      //   Click Count: ${this.clickCount}
+      //   First Click Timestamp: ${this.firstClickTimestamp}
+      //   Client Balance: ${this.clientBalance}
+      //   Score Per Tap: ${scorePerTap}
+      //   Energy: ${this.energy}
+      //   Cached NFT: ${JSON.stringify(this.cachedNft)}
+      // `;
+      // alert(alertInfo);
+  
+      if (this.clickCount >= 50 || (Date.now() / 1000 - this.firstClickTimestamp! >= 5)) {
+        this.sendClicks();
+      }
+    } else {
+      if (this.telegramService.isTelegramWebAppAvailable()) {
+        this.telegramService.showAlert('You used up all your energy for today. It will replenish tomorrow.');
+      } else {
+        console.warn('Telegram WebApp is not available');
+      }
+    }
+  }
+
+  private sendClicks() {
+    if (this.clickCount === 0) return;
+  
+    // const clicksToSend = this.clickCount;
+    this.homeService.sendClickBatch({
+      clicks: this.clientBalance,
+      timestamp: this.firstClickTimestamp!,
+      current_client_balance: this.clientBalance
+    }).subscribe(
+      response => {
+        this.clientBalance = response.new_balance;
+        this.energy = response.clicks_left;
+        this.updateUIWithConfirmedClicks(response);
+      },
+      error => {
+        console.error('Error sending clicks:', error);
+      }
+    );
+  
+    this.clickCount = 0;
+    this.firstClickTimestamp = null;
+  }
+  
+  private updateUIWithPendingClicks() {
+    this.balance = this.clientBalance;
+    this.updateEnergyPercentage();
+  }
+  
+  private updateUIWithConfirmedClicks(data: any) {
+    this.balance = data.new_balance;
+    this.energy = data.clicks_left;
+    this.updateEnergyPercentage();
   }
 
   openModal(event: MouseEvent) {

@@ -16,7 +16,7 @@
             </div>
             <div class="main_footer_balance">
                 <img src="../../../assets/images/icons/mybank_coin.png" alt="Icon" class="icon">
-                <span class="text">{{ balance | number:'1.2-2' }}</span>
+                <span class="text">{{ clientBalance | number:'1.2-2' }}</span>
             </div>
             <div class="main_footer_buy_btc" (click)="openNewModal($event)">
                 <span class="text">$ Buy Bitcoin</span>
