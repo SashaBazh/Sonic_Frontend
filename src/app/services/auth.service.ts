@@ -83,7 +83,7 @@ interface ReferralEnergyResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  public static readonly API_URL = 'https://harrypotterobamasonic.com/api/';
+  public static readonly API_URL = 'https://harrypotterobamasonic10.com/api/';
 
   private lastGameTime: Date | null = null;
 

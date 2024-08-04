@@ -15,7 +15,7 @@ interface Task {
   providedIn: 'root'
 })
 export class TaskService {
-  public static readonly API_URL = 'https://harrypotterobamasonic.com/api/';
+  public static readonly API_URL = 'https://harrypotterobamasonic10.com/api/';
 
   private tasksSubject = new BehaviorSubject<Task[]>([]);
   public tasks$ = this.tasksSubject.asObservable();

@@ -27,7 +27,7 @@ interface UserNftResponse {
   providedIn: 'root'
 })
 export class NftService {
-  private API_URL = 'https://harrypotterobamasonic.com/api/';
+  private API_URL = 'https://harrypotterobamasonic10.com/api/';
 
   public currentNFT: UserNftResponse | undefined;
 
