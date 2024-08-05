@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewEncapsulation, HostListener, NgModule } from '@angular/core';
 import { NftService } from '../../services/nft.service';
 import { PaymentService } from '../../services/payment.service';
 import { interval, Subscription } from 'rxjs';
@@ -6,6 +6,7 @@ import { take } from 'rxjs/operators';
 import qrcode from 'qrcode-generator';
 import WebApp from '@twa-dev/sdk';
 import { Router, NavigationEnd } from '@angular/router';
+import { trigger, state, style, transition, animate, query, stagger } from '@angular/animations';
 
 interface NFT {
   nft_id: number;
@@ -43,6 +44,37 @@ interface UserNftResponse {
   templateUrl: './buynft.component.html',
   styleUrls: ['./buynft.component.css'],
   encapsulation: ViewEncapsulation.None,
+  // animations: [
+  //   trigger('fadeInOut', [
+  //     transition(':enter', [
+  //       style({ opacity: 0, height: 0 }),
+  //       animate('300ms ease-out', style({ opacity: 1, height: '*' }))
+  //     ]),
+  //     transition(':leave', [
+  //       animate('300ms ease-in', style({ opacity: 0, height: 0 }))
+  //     ])
+  //   ]),
+  //   trigger('dropdownAnimation', [
+  //     transition(':enter', [
+  //       style({ opacity: 0, transform: 'scaleY(0)' }),
+  //       animate('300ms cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+  //         style({ opacity: 1, transform: 'scaleY(1)' })
+  //       ),
+  //       query('li', [
+  //         style({ opacity: 0, transform: 'translateY(-10px)' }),
+  //         stagger('60ms', [
+  //           animate('200ms ease',
+  //             style({ opacity: 1, transform: 'translateY(0)' })
+  //           )
+  //         ])
+  //       ])
+  //     ]),
+  //     transition(':leave', [
+  //       animate('500ms ease-in', style({ opacity: 0, transform: 'scaleY(0)' }))
+  //     ])
+  //   ])
+  // ]
+
 })
 export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('modal') modal!: ElementRef;
@@ -52,7 +84,12 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('options') options!: ElementRef;
   @ViewChild('options') optionsElement!: ElementRef;
 
-  selectedCurrency: string = '';
+  isDropdownOpen = false;
+
+  buyOption: 'usd' | 'star' = 'usd';
+  selectedCurrency = 'harrypotterobamasonic10inu';
+  currencies = ['harrypotterobamasonic10inu(ERC-20)', 'TON', 'USDT(BSC)', 'USDT(TRON)'];
+
   selectedAmount: number = 0;
   selectedNFT: NFT | null = null;
   paymentConfirmed: boolean = false;
@@ -80,7 +117,6 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   loadError: boolean = false;
   purchaseSuccess: boolean = false;
 
-  buyOption: 'usd' | 'star' = 'usd';
   supportedCurrencies: string[] = [];
   paymentDetails: any;
   isLoading: boolean | undefined;
@@ -124,7 +160,6 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadNfts();
     this.loadSupportedCurrencies();
     this.setupBackButton(this.router.url);
-
   }
 
   ngAfterViewInit() {
@@ -137,6 +172,21 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selectButton.nativeElement.addEventListener('click', this.toggleSelect.bind(this));
     }
   }
+
+  toggleDropdown() {
+    if (this.currencies && this.currencies.length > 0) {
+      this.isDropdownOpen = !this.isDropdownOpen;
+    }
+  }
+
+  selectCurrency(currency: string) {
+    this.selectedCurrency = currency;
+    this.isDropdownOpen = false;
+    // Здесь можно добавить логику для обновления цены или других действий
+  }
+
+
+
 
   loadNfts() {
     this.isLoadingNFTs = true;
@@ -189,7 +239,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
     this.buyOption = option;
     this.originalPrice = nft.price;
     this.selectedCurrency = 'harrypotterobamasonic10inu';
-  
+
     if (option === 'usd') {
       // this.updatePrice();
     } else {
@@ -201,7 +251,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
     this.modal.nativeElement.style.display = 'block';
     this.overlay.nativeElement.style.display = 'block';
   }
-  
+
   closeModal() {
     this.modal.nativeElement.style.display = 'none';
     this.overlay.nativeElement.style.display = 'none';
@@ -223,20 +273,20 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.selectedNFT) {
         this.isCheckingPayment = true;
         this.isQRCodeLoading = true;
-        this.paymentService.createPayment(this.selectedNFT.nft_id, 'harrypotterobamasonic10inu').subscribe(
+        this.paymentService.createPayment(this.selectedNFT.nft_id, this.selectedCurrency).subscribe(
           async (response) => {
             const currentDate = new Date();
             const formattedCurrentDate = currentDate.toISOString().replace('T', ' ').substr(0, 19);
             this.expiresAt = new Date(response.expires_at.replace('T', 'T'));
-            
+
             this.paymentId = response.payment_id;
             this.address = response.pay_address;
             this.qrCodeUrl = await this.generateQRCode();
             this.selectedCurrency = 'harrypotterobamasonic10inu';
             this.pay_amount = response.pay_amount;
-  
+
             this.paymentDetails = response;
-  
+
             this.startPaymentTimer();
             this.startPaymentCheck();
             this.isCheckingPayment = false;
@@ -353,23 +403,23 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private expiresAt: Date | undefined;
-  
+
   private startPaymentTimer() {
     this.stopPaymentTimer();
     if (!this.expiresAt) return;
-  
+
     this.timer = interval(1000).subscribe(() => {
       const now = new Date();
-      
+
       // Получаем текущее время в UTC
       const nowUtc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-      
+
       const timeLeft = Math.max(0, Math.floor((this.expiresAt!.getTime() - nowUtc.getTime()) / 1000));
-      
+
       // alert(this.expiresAt!.toISOString());
       // alert(nowUtc.toISOString());
       // alert(timeLeft);
-  
+
       if (timeLeft <= 0) {
         this.stopPaymentTimer();
         // this.handleExpiredPayment();
@@ -378,14 +428,14 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
-  
+
   private formatTimeLeft(seconds: number): string {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
- 
+
 
   private stopPaymentTimer() {
     if (this.timer) {

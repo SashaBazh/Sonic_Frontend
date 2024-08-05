@@ -494,23 +494,11 @@ h2 {
   color: #fff;
 }
 
-.sonic-select {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-.sonic-select {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
 .nft_gradient_button2 {
   margin-top: 20px;
   width: 90%;
   padding: 12px;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: bold;
   color: #fff;
   background: linear-gradient(45deg, #0060ff, #00a0ff);
@@ -520,75 +508,6 @@ h2 {
   position: relative;
   transition: all 0.3s ease;
 }
-
-/* .nft_gradient_button2:hover {
-  background: linear-gradient(45deg, #0050e0, #0090e0);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-} */
-
-.sonic-options {
-  display: none;
-  width: 75%;
-  list-style: none;
-  background: linear-gradient(45deg, #001e3c, #003366);
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  top: 100%;
-  margin-left: 15px;
-  align-items: start;
-}
-
-.sonic-options li {
-  padding: 12px;
-  color: #fff;
-  cursor: pointer;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.sonic-options li:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.sonic-select.active .sonic-options {
-  display: block;
-  animation: unfoldAndGlow 0.8s ease-out forwards;
-}
-
-.sonic-select.active .sonic-options li {
-  animation: flipIn 0.6s ease-out forwards;
-}
-
-/* @keyframes unfoldAndGlow {
-  0% {
-    opacity: 0;
-    transform: rotateX(-90deg);
-    filter: brightness(0.5) blur(10px);
-  }
-  50% {
-    transform: rotateX(-20deg);
-    filter: brightness(1.2) blur(5px);
-  }
-  100% {
-    opacity: 1;
-    transform: rotateX(0deg);
-    filter: brightness(1) blur(0);
-  }
-}
-
-@keyframes flipIn {
-  0% {
-    opacity: 0;
-    transform: rotateX(-90deg) translateY(50px);
-  }
-  100% {
-    opacity: 1;
-    transform: rotateX(0deg) translateY(0);
-  }
-} */
 
 .referral-info {
   background-color: rgba(255, 255, 255, 0.1);
@@ -630,6 +549,98 @@ h2 {
 
 .referral-level:nth-child(4) span {
   color: #CD7F32;
+}
+
+/* OPTION //////////////////////////////////////////////////////////////////////////////////////////*/
+
+/* .nft_gradient_button2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+} */
+
+.sonic-select {
+  position: relative;
+}
+
+.dropdown-menu {
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 1000;
+  min-width: 12rem;
+  padding: 0.5rem 0;
+  margin: 0;
+  font-size: 0.7rem;
+  color: #333;
+  text-align: left;
+  list-style: none;
+  background: linear-gradient(135deg, #e0f7fa 0%, #80deea 50%, #0288d1 100%);
+  background-clip: padding-box; 
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transform-origin: top center;
+  opacity: 0;
+  transform: scaleY(0);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.dropdown-menu.show {
+  visibility: visible;
+  height: auto;
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.dropdown-menu li {
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.dropdown-menu.show li {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dropdown-menu li:hover {
+  background-color: #f0f4f8;
+  color: #0056b3;
+  padding-left: 2rem;
+}
+
+.dropdown-menu li:not(:last-child) {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-arrow {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  vertical-align: middle;
+  border-top: 4px solid;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+  transition: transform 0.3s ease;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
 }
 
 /* MODAL_WINDOW2 //////////////////////////////////////////////////////////////////////////////////////////*/

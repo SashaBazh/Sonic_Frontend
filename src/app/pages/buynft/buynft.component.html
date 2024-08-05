@@ -132,7 +132,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="referral-info" *ngIf="!isSelectOpen">
+
+                <div class="referral-info" *ngIf="!isDropdownOpen">
                     <h3>Referral Rewards</h3>
                     <div class="referral-level">
                         <span>Level 1: {{ (selectedNFT.real_money_1_level * 100).toFixed(0) }}% of referral
@@ -148,11 +149,18 @@
                     </div>
                 </div>
 
-                <div class="sonic-select" *ngIf="buyOption === 'usd'" #selectContainer>
-                    <button class="nft_gradient_button2">
-                        {{ selectedCurrency }}
+                <div class="sonic-select" *ngIf="buyOption === 'usd'">
+                    <button class="nft_gradient_button2" (click)="toggleDropdown()">
+                      {{ selectedCurrency }}
+                      <span class="dropdown-arrow" [class.open]="isDropdownOpen"></span>
                     </button>
-                </div>
+                    <ul class="dropdown-menu" [class.show]="isDropdownOpen">
+                      <li *ngFor="let currency of currencies" (click)="selectCurrency(currency)">
+                        {{ currency }}
+                      </li>
+                    </ul>
+                  </div>
+
 
                 <div class="button-container">
                     <ng-container *ngIf="buyOption === 'usd'">
@@ -187,7 +195,7 @@
                     <img *ngIf="!isQRCodeLoading" [src]="qrCodeUrl" alt="QR Code">
                     <span class="address-value">{{address}}</span>
                 </div>
-                <button class="nft-purchase-copy-btn" (click)="copyToClipboard(address)" >Copy address</button>
+                <button class="nft-purchase-copy-btn" (click)="copyToClipboard(address)">Copy address</button>
                 <!-- <button class="nft-purchase-delete-btn" (click)="cancelPayment()">DELETE INVOICE</button> -->
                 <div class="payment-status" *ngIf="!paymentConfirmed">
                     <p>Waiting for payment</p>

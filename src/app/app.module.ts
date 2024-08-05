@@ -14,6 +14,7 @@ import { BuynftComponent } from './pages/buynft/buynft.component';
 import { FormsModule } from '@angular/forms';
 import { NftService } from '../app/services/nft.service';
 import { TelegramService } from './services/telegram.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 export function initializeApp(telegramService: TelegramService) {
   return () => telegramService.initializeApp();
@@ -25,7 +26,8 @@ export function initializeApp(telegramService: TelegramService) {
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    BrowserAnimationsModule,
 
   ],
   providers: [
