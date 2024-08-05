@@ -227,18 +227,6 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
           async (response) => {
             const currentDate = new Date();
             const formattedCurrentDate = currentDate.toISOString().replace('T', ' ').substr(0, 19);
-            
-  //           const message = `
-  // Текущая дата и время: ${formattedCurrentDate}
-  // Идентификатор платежа: ${response.payment_id}
-  // Адрес для оплаты: ${response.pay_address}
-  // Сумма к оплате: ${response.pay_amount} ${response.pay_currency}
-  // Срок действия: ${response.expires_at}
-  // `;
-  
-  //           alert(message);
-            
-            // Остальной код остается без изменений
             this.expiresAt = new Date(response.expires_at.replace('T', 'T'));
             
             this.paymentId = response.payment_id;

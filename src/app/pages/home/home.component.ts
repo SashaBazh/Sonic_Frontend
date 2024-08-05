@@ -13,6 +13,12 @@ import * as HomeFunctions from '../../home.functions';
 import { Subscription } from 'rxjs';
 import { TelegramService } from '../../services/telegram.service';
 
+declare global {
+  var interval: number;
+}
+
+global.interval = 2000;
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -51,6 +57,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   clientBalance = 1;
   private balanceSubscription: Subscription | undefined;
   
+  
   private clickSendInterval: any;
 
   skins: Skin[] = HomeFunctions.SKINS;
@@ -86,7 +93,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.clientBalance = balance;
     });
 
-    this.clickSendInterval = setInterval(() => this.sendClicks(), 5000);
+    this.clickSendInterval = setInterval(() => this.sendClicks(), global.interval);
 
     this.checkAutoClickerStatus();
 

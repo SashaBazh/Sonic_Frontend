@@ -251,13 +251,10 @@ export class HomeService {
   }
   
   sendClickBatch(clickBatch: ClickBatch): Observable<ClickResponse> {
-    // alert(`Sending click batch: ${JSON.stringify(clickBatch)}`);
     return this.http.post<ClickResponse>(`${HomeService.API_URL}home/click`, clickBatch, { headers: HomeService.headers }).pipe(
       tap(response => {
-        // alert(`Click batch sent successfully: ${JSON.stringify(response)}`);
       }),
       catchError(error => {
-        // alert(`Error sending click batch: ${JSON.stringify(error)}`);
         return this.handleError(error);
       })
     );

@@ -21,11 +21,7 @@ export class LoadingComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    if (!this.loadingService.getLoading()) {
-      this.navigateToHome();
-    } else {
-      this.startLoading();
-    }
+    this.startLoading();
   }
 
   ngOnDestroy() {
