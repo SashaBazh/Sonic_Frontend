@@ -14,10 +14,10 @@ import { Subscription } from 'rxjs';
 import { TelegramService } from '../../services/telegram.service';
 
 declare global {
-  var interval: number;
+  interface Window {
+    interval: number;
+  }
 }
-
-global.interval = 2000;
 
 @Component({
   selector: 'app-home',
@@ -89,11 +89,13 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.updateEnergyPercentage();
     });
 
+    window.interval = 2000;
+
     this.balanceSubscription = this.homeService.balance$.subscribe(balance => {
       this.clientBalance = balance;
     });
 
-    this.clickSendInterval = setInterval(() => this.sendClicks(), global.interval);
+    this.clickSendInterval = setInterval(() => this.sendClicks(), window.interval);
 
     this.checkAutoClickerStatus();
 
