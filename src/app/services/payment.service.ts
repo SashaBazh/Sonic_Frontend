@@ -76,32 +76,41 @@ export class PaymentService {
   }
 
   private APIURL = 'https://api.coingecko.com/api/v3';
-
-  // ПОЛУЧЕНИЕ С COINGECO ИНФУ О ТЕКУЩЕЙ ЦЕНЕ ТОКЕНА  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+  private API_KEY = 'CG-4bxNeYA1yhCsz7N2mZsd3LGN'; // Вставьте ваш API ключ здесь
   private priceCache: { [key: string]: { price: number, timestamp: number } } = {};
-  private CACHE_DURATION = 60000; // 1 минута
+  private CACHE_DURATION = 60000; // 1 minute
 
-  getPrice(coinId: string): Observable<number> {
+  getPrice(coinId: string, originalPrice: number): Observable<number> {
     const cachedData = this.priceCache[coinId];
     if (cachedData && Date.now() - cachedData.timestamp < this.CACHE_DURATION) {
+      // alert(`Используем кэшированные данные для ${coinId}: ${cachedData.price}`);
       return of(cachedData.price);
     }
 
-    return this.http.get<any>(`${this.APIURL}/simple/price?ids=${coinId},harrypotterobamasonic10in&vs_currencies=usd`)
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.API_KEY}`);
+
+    return this.http.get<any>(`${this.APIURL}/simple/price?ids=${coinId},harrypotterobamasonic10in&vs_currencies=usd`, { headers })
       .pipe(
         map(response => {
+          // alert('Ответ от API CoinGecko: ' + JSON.stringify(response));
           const coinPrice = response[coinId].usd;
           const harryPrice = response['harrypotterobamasonic10in'].usd;
-          const price = harryPrice / coinPrice;
-          this.priceCache[coinId] = { price, timestamp: Date.now() };
-          return price;
+          // alert(`Цена ${coinId} в USD: ${coinPrice}`);
+          // alert('Цена Harry Potter токена в USD: ' + harryPrice);
+          const exchangeRate = harryPrice / coinPrice;
+          // alert('Рассчитанный курс обмена: ' + exchangeRate);
+          this.priceCache[coinId] = { price: exchangeRate, timestamp: Date.now() };
+          return exchangeRate;
         }),
         catchError(error => {
-          console.error('Error fetching price:', error);
-          return of(this.priceCache[coinId]?.price || 30000);
+          // alert('Ошибка при получении цены: ' + error.message);
+          return of(this.priceCache[coinId]?.price || 1);
         })
       );
+  }
+
+  private calculatePrice(exchangeRate: number, originalPrice: number): number {
+    return originalPrice * exchangeRate;
   }
 
   public static get headers(): HttpHeaders {

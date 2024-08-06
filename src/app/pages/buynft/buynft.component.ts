@@ -44,36 +44,6 @@ interface UserNftResponse {
   templateUrl: './buynft.component.html',
   styleUrls: ['./buynft.component.css'],
   encapsulation: ViewEncapsulation.None,
-  // animations: [
-  //   trigger('fadeInOut', [
-  //     transition(':enter', [
-  //       style({ opacity: 0, height: 0 }),
-  //       animate('300ms ease-out', style({ opacity: 1, height: '*' }))
-  //     ]),
-  //     transition(':leave', [
-  //       animate('300ms ease-in', style({ opacity: 0, height: 0 }))
-  //     ])
-  //   ]),
-  //   trigger('dropdownAnimation', [
-  //     transition(':enter', [
-  //       style({ opacity: 0, transform: 'scaleY(0)' }),
-  //       animate('300ms cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-  //         style({ opacity: 1, transform: 'scaleY(1)' })
-  //       ),
-  //       query('li', [
-  //         style({ opacity: 0, transform: 'translateY(-10px)' }),
-  //         stagger('60ms', [
-  //           animate('200ms ease',
-  //             style({ opacity: 1, transform: 'translateY(0)' })
-  //           )
-  //         ])
-  //       ])
-  //     ]),
-  //     transition(':leave', [
-  //       animate('500ms ease-in', style({ opacity: 0, transform: 'scaleY(0)' }))
-  //     ])
-  //   ])
-  // ]
 
 })
 export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -155,7 +125,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.preloadPrices();
+    // this.preloadPrices();
     this.loadCurrentNFT();
     this.loadNfts();
     this.loadSupportedCurrencies();
@@ -182,7 +152,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   selectCurrency(currency: string) {
     this.selectedCurrency = currency;
     this.isDropdownOpen = false;
-    // Здесь можно добавить логику для обновления цены или других действий
+    this.updatePrice();
   }
 
 
@@ -217,31 +187,106 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  priceCache: { [key: string]: number } = {};
+  // priceCache: { [key: string]: number } = {};
 
-  preloadPrices() {
-    const currencies = ['tether', 'binancecoin', 'the-open-network'];
-    currencies.forEach(coinId => {
-      this.paymentService.getPrice(coinId).subscribe(
-        (price) => {
-          this.priceCache[coinId] = price;
-        },
-        (error) => {
-          console.error(`Error fetching price for ${coinId}:`, error);
+  // preloadPrices() {
+  //   const currencies = ['tether', 'binancecoin', 'the-open-network'];
+  //   currencies.forEach(coinId => {
+  //     this.paymentService.getPrice(coinId).subscribe(
+  //       (price) => {
+  //         this.priceCache[coinId] = price;
+  //       },
+  //       (error) => {
+  //         console.error(`Error fetching price for ${coinId}:`, error);
+  //       }
+  //     );
+  //   });
+  // }
+
+  updatePrice() {
+    if (!this.selectedNFT) {
+      console.error('Ошибка: selectedNFT не определен');
+      alert('Ошибка: NFT не выбран');
+      return;
+    }
+  
+    let coinId: string;
+    switch (this.selectedCurrency) {
+      case 'harrypotterobamasonic10inu(ERC-20)':
+        coinId = 'harrypotterobamasonic10in';
+        break;
+      case 'TON':
+        coinId = 'the-open-network';
+        break;
+      case 'USDT(BSC)':
+      case 'USDT(TRON)':
+        coinId = 'tether';
+        break;
+      default:
+        coinId = 'harrypotterobamasonic10in';
+    }
+  
+    console.log('Запрашиваем цену для:', coinId);
+  
+    this.isLoadingPrice = true;
+    this.paymentService.getPrice(coinId, this.selectedNFT.price).subscribe(
+      (exchangeRate) => {
+        if (this.selectedNFT) {
+          const harryPotterPrice = this.selectedNFT.price;
+          const usdPrice = harryPotterPrice * exchangeRate;    
+          
+          if (coinId === 'harrypotterobamasonic10in') {
+            this.originalPrice = harryPotterPrice;
+          } else {
+            this.originalPrice = harryPotterPrice * exchangeRate;
+          }
+          
+          this.isLoadingPrice = false;
+          
+          // const debugInfo = `
+          //   Обновление цены:
+          //   Выбранная валюта: ${this.selectedCurrency}
+          //   CoinGecko ID: ${coinId}
+          //   Цена в Harry Potter токенах: ${harryPotterPrice}
+          //   Курс обмена: ${exchangeRate}
+          //   Цена в USD: ${usdPrice.toFixed(2)}
+          //   Цена в выбранной валюте: ${this.originalPrice.toFixed(8)}
+          // `;
+          // alert(debugInfo);
+        } else {
+          // alert('Произошла ошибка при обновлении цены');
+          this.isLoadingPrice = false;
         }
-      );
-    });
+      },
+      (error) => {
+        this.isLoadingPrice = false;
+        // alert(`Ошибка при обновлении цены: ${error.message}`);
+      }
+    );
   }
 
   openModal(nft: NFT, option: 'usd' | 'star') {
+    if (!nft) {
+      // alert('Ошибка: NFT не выбран');
+      return;
+    }
+  
     this.showModal();
     this.selectedNFT = nft;
     this.buyOption = option;
-    this.originalPrice = nft.price;
-    this.selectedCurrency = 'harrypotterobamasonic10inu';
-
+    this.selectedCurrency = 'harrypotterobamasonic10inu(ERC-20)';
+  
+    // Отладочная информация
+    // const debugInfo = `
+    //   Выбранный NFT: ${JSON.stringify(nft)}
+    //   Опция покупки: ${option}
+    //   Текущая валюта: ${this.selectedCurrency}
+    //   Исходная цена: ${nft.price}
+    // `;
+    // alert(debugInfo);
+  
     if (option === 'usd') {
-      // this.updatePrice();
+      this.updatePrice();
     } else {
       this.selectedAmount = nft.price;
     }
@@ -443,13 +488,6 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
       this.timer = null;
     }
   }
-
-  // private updateTimerDisplay(timeLeft: number) {
-  //   const hours = Math.floor(timeLeft / 3600);
-  //   const minutes = Math.floor((timeLeft % 3600) / 60);
-  //   const seconds = timeLeft % 60;
-  //   this.timeToPayFormatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  // }
 
   private handleExpiredPayment() {
     if (this.paymentId) {

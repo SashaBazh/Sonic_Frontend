@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild, Renderer2, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError, Subscription } from 'rxjs';
 import { Chart, registerables, ChartType, ChartConfiguration} from 'chart.js';
@@ -102,13 +102,19 @@ export class MybankComponent implements OnInit, OnDestroy {
     );
   }
 
+  private API_KEY = 'CG-4bxNeYA1yhCsz7N2mZsd3LGN'; 
+
   fetchCurrentPrice() {
     const apiUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=harrypotterobamasonic10in&vs_currencies=usd,btc,eth&include_24hr_change=true';
-    this.http.get(apiUrl).subscribe(
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.API_KEY}`);
+
+    this.http.get(apiUrl, { headers }).subscribe(
       (data: any) => {
         const coinData = data['harrypotterobamasonic10in'];
+        console.log(coinData);
       },
       (error) => {
+        console.error('Ошибка при получении текущей цены:', error);
       }
     );
   }
@@ -137,11 +143,12 @@ export class MybankComponent implements OnInit, OnDestroy {
     }
 
     const apiUrl = `https://api.coingecko.com/api/v3/coins/harrypotterobamasonic10in/market_chart?vs_currency=usd&days=${days}&interval=${interval}`;
-
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.API_KEY}`);
     this.chartDataSubscription?.unsubscribe();
 
-    this.chartDataSubscription = this.http.get(apiUrl).pipe(
+    this.chartDataSubscription = this.http.get(apiUrl, { headers }).pipe(
       catchError(error => {
+        console.error('Не удалось получить данные:', error);
         return throwError(() => new Error('Не удалось получить данные'));
       })
     ).subscribe(
@@ -149,6 +156,7 @@ export class MybankComponent implements OnInit, OnDestroy {
         this.createChart(data);
       },
       (error) => {
+        console.error('Ошибка при получении данных для графика:', error);
       }
     );
   }

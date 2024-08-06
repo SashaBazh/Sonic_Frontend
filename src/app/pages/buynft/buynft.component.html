@@ -162,16 +162,21 @@
                   </div>
 
 
-                <div class="button-container">
+                  <div class="button-container">
                     <ng-container *ngIf="buyOption === 'usd'">
-                        <button class="nft_gradient_button buy-usd" (click)="buyNFT()">
-                            Buy for {{ this.originalPrice }}
-                        </button>
+                      <button class="nft_gradient_button buy-usd" (click)="buyNFT()" [disabled]="isLoadingPrice">
+                        <ng-container *ngIf="!isLoadingPrice">
+                          Buy for ~{{ originalPrice | number:'1.0-8' }}
+                        </ng-container>
+                        <ng-container *ngIf="isLoadingPrice">
+                          Loading price...
+                        </ng-container>
+                      </button>
                     </ng-container>
                     <button *ngIf="buyOption === 'star'" class="nft_gradient_button buy-star">
-                        Buy for <img src="../../../assets/images/icons/star.png" alt="Star" class="star-icon">
+                      Buy for <img src="../../../assets/images/icons/star.png" alt="Star" class="star-icon"> {{ selectedAmount }}
                     </button>
-                </div>
+                  </div>
 
             </div>
         </div>

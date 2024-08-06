@@ -496,9 +496,9 @@ h2 {
 
 .nft_gradient_button2 {
   margin-top: 20px;
-  width: 90%;
+  width: 84%;
   padding: 12px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: bold;
   color: #fff;
   background: linear-gradient(45deg, #0060ff, #00a0ff);
@@ -507,6 +507,8 @@ h2 {
   cursor: pointer;
   position: relative;
   transition: all 0.3s ease;
+  margin: 3px 0;
+
 }
 
 .referral-info {
@@ -576,17 +578,17 @@ h2 {
   visibility: hidden;
   height: 0;
   overflow: hidden;
-  top: calc(100% + 10px);
+  top: calc(100% + 20px);
   left: 0;
   z-index: 1000;
   min-width: 12rem;
   padding: 0.5rem 0;
   margin: 0;
   font-size: 0.7rem;
-  color: #333;
+  color: #ffffff;
   text-align: left;
   list-style: none;
-  background: linear-gradient(135deg, #e0f7fa 0%, #80deea 50%, #0288d1 100%);
+  background: linear-gradient(135deg, #1a73e8 0%, #4285f4 50%, #0b5294 100%);
   background-clip: padding-box; 
   border: none;
   border-radius: 8px;
@@ -595,6 +597,8 @@ h2 {
   opacity: 0;
   transform: scaleY(0);
   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  margin: 0 20px;
+  margin-top: 10px;
 }
 
 .dropdown-menu.show {
@@ -618,7 +622,7 @@ h2 {
 }
 
 .dropdown-menu li:hover {
-  background-color: #f0f4f8;
+  background-color: #ffcc00;
   color: #0056b3;
   padding-left: 2rem;
 }
