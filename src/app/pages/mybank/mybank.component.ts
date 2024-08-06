@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild, Renderer2, OnInit, OnDestroy, ViewEnc
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError, Subscription } from 'rxjs';
-import { Chart, registerables, ChartType, ChartConfiguration} from 'chart.js';
+import { Chart, registerables, ChartType, ChartConfiguration } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import { enUS } from 'date-fns/locale';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -37,7 +37,7 @@ export class MybankComponent implements OnInit, OnDestroy {
       this.closeKeyboard();
     }
   }
-  
+
   private resizeListener: (() => void) | null = null;
 
   withdrawAddress: string = '';
@@ -46,6 +46,8 @@ export class MybankComponent implements OnInit, OnDestroy {
   referralBalance: number = 0;
   withdrawAmount: number = 0;
   paymentSystem: string = 'BEP-20';
+  private chartDataCache: { [key: string]: any } = {};
+  private updateCacheInterval: any;
 
   private chart: Chart | null = null;
   private chartDataSubscription: Subscription | null = null;
@@ -55,7 +57,7 @@ export class MybankComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private authService: AuthService,
     private telegramService: TelegramService
-    
+
   ) {
     this.authService.balance$.subscribe(balance => this.balance = balance);
     this.authService.referralBalance$.subscribe(balance => this.referralBalance = balance);
@@ -74,12 +76,24 @@ export class MybankComponent implements OnInit, OnDestroy {
     this.getBalance();
     this.getReferalBalance();
     this.fetchChartData('30');
+
+    setInterval(() => {
+      this.updateChartDataCache();
+    }, 2 * 60 * 1000);
   }
+
+  updateChartDataCache() {
+    Object.keys(this.chartDataCache).forEach(range => {
+      this.fetchChartData(range);
+    });
+  }
+  
+  
 
   adjustCanvasWidth() {
     const container = document.querySelector('.mybank_info_contanier') as HTMLElement;
     const canvas = this.canvasRef.nativeElement;
-    
+
     if (container && canvas) {
       const containerWidth = container.offsetWidth;
       this.renderer.setStyle(canvas, 'width', `${containerWidth - 2}px`);
@@ -102,109 +116,115 @@ export class MybankComponent implements OnInit, OnDestroy {
     );
   }
 
-  private API_KEY = 'CG-4bxNeYA1yhCsz7N2mZsd3LGN'; 
+  private API_KEY = 'CG-4bxNeYA1yhCsz7N2mZsd3LGN';
 
-  fetchCurrentPrice() {
-    const apiUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=harrypotterobamasonic10in&vs_currencies=usd,btc,eth&include_24hr_change=true';
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.API_KEY}`);
+fetchCurrentPrice() {
+  const apiUrl = `https://pro-api.coingecko.com/api/v3/simple/price?ids=harrypotterobamasonic10in&vs_currencies=usd,btc,eth&include_24hr_change=true&x_cg_pro_api_key=${this.API_KEY}`;
 
-    this.http.get(apiUrl, { headers }).subscribe(
-      (data: any) => {
-        const coinData = data['harrypotterobamasonic10in'];
-        console.log(coinData);
-      },
-      (error) => {
-        console.error('Ошибка при получении текущей цены:', error);
-      }
-    );
-  }
-  
-  fetchChartData(range: string) {
-    let interval: string;
-    let days: string = range;
-
-    switch (range) {
-      case '1':
-        interval = 'daily';
-        break;
-      case '7':
-        interval = 'daily';
-        break;
-      case '30':
-      case '90':
-      case '365':
-        interval = 'daily';
-        break;
-      case 'max':
-        interval = 'daily';
-        break;
-      default:
-        interval = 'daily';
+  this.http.get(apiUrl).subscribe(
+    (data: any) => {
+      const coinData = data['harrypotterobamasonic10in'];
+      console.log(coinData);
+    },
+    (error) => {
+      console.error('Ошибка при получении текущей цены:', error);
     }
+  );
+}
 
-    const apiUrl = `https://api.coingecko.com/api/v3/coins/harrypotterobamasonic10in/market_chart?vs_currency=usd&days=${days}&interval=${interval}`;
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.API_KEY}`);
-    this.chartDataSubscription?.unsubscribe();
+fetchChartData(range: string) {
+  if (this.chartDataCache[range]) {
+    console.log('Использование кэшированных данных для диапазона:', range);
+    this.createChart(this.chartDataCache[range]);
+    return;
+  }
+   
+  let interval: string;
+  let days: string = range
+   
+  switch (range) {
+    case '1':
+    case '7':
+      interval = 'daily';
+      break;
+    case '30':
+    case '90':
+    case '365':
+    case 'max':
+    default:
+      interval = 'daily';
+  }
+   
+  const apiUrl = `https://pro-api.coingecko.com/api/v3/coins/harrypotterobamasonic10in/market_chart?vs_currency=usd&days=${days}&interval=${interval}`;
+  const headers = new HttpHeaders().set('x-cg-pro-api-key', this.API_KEY);
+  this.chartDataSubscription?.unsubscribe();
+   
+  this.chartDataSubscription = this.http.get(apiUrl, { headers }).pipe(
+    catchError(error => {
+      console.error('Не удалось получить данные:', error);
+      return throwError(() => new Error('Не удалось получить данные'));
+    })
+  ).subscribe(
+    (data: any) => {
+      // Сохраняем данные в кэш
+      this.chartDataCache[range] = data;
+      this.createChart(data);
+    },
+    (error) => {
+      console.error('Ошибка при получении данных для графика:', error);
+    }
+  );
+}
 
-    this.chartDataSubscription = this.http.get(apiUrl, { headers }).pipe(
-      catchError(error => {
-        console.error('Не удалось получить данные:', error);
-        return throwError(() => new Error('Не удалось получить данные'));
-      })
-    ).subscribe(
-      (data: any) => {
-        this.createChart(data);
-      },
-      (error) => {
-        console.error('Ошибка при получении данных для графика:', error);
-      }
-    );
+  clearChartDataCache() {
+    this.chartDataCache = {};
+    console.log('Кэш данных графика очищен');
   }
 
   getXAxisSettings(labels: Date[]): { time: CustomTimeScale } {
-  const range = labels[labels.length - 1].getTime() - labels[0].getTime();
-  const days = range / (1000 * 60 * 60 * 24);
+    const range = labels[labels.length - 1].getTime() - labels[0].getTime();
+    const days = range / (1000 * 60 * 60 * 24);
 
-  if (days <= 1) {
-    return {
-      time: {
-        unit: 'hour',
-        displayFormats: {
-          hour: 'HH:mm'
-        },
-        stepSize: 2
-      }
-    };
-  } else if (days <= 7) {
-    return {
-      time: {
-        unit: 'day',
-        displayFormats: {
-          day: 'd MMM'
-        },
-        stepSize: 1
-      }
-    };
-  } else if (days <= 30) {
-    return {
-      time: {
-        unit: 'week',
-        displayFormats: {
-          week: 'd MMM'
+    if (days <= 1) {
+      return {
+        time: {
+          unit: 'hour',
+          displayFormats: {
+            hour: 'HH:mm'
+          },
+          stepSize: 2
         }
-      }
-    };
-  } else {
-    return {
-      time: {
-        unit: 'month',
-        displayFormats: {
-          month: 'MMM yyyy'
+      };
+    } else if (days <= 7) {
+      return {
+        time: {
+          unit: 'day',
+          displayFormats: {
+            day: 'd MMM'
+          },
+          stepSize: 1
         }
-      }
-    };
+      };
+    } else if (days <= 30) {
+      return {
+        time: {
+          unit: 'week',
+          displayFormats: {
+            week: 'd MMM'
+          }
+        }
+      };
+    } else {
+      return {
+        time: {
+          unit: 'month',
+          displayFormats: {
+            month: 'MMM yyyy'
+          }
+        }
+      };
+    }
   }
-}
 
   createChart(data: any) {
     if (this.chartCanvas && data.prices && data.prices.length > 0) {
@@ -213,20 +233,20 @@ export class MybankComponent implements OnInit, OnDestroy {
         const prices = data.prices.map((item: number[]) => item[1]);
         const labels = data.prices.map((item: number[]) => new Date(item[0]));
         const volumes = data.total_volumes.map((item: number[]) => item[1]);
-  
+
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
-  
+
         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
         gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
         gradient.addColorStop(1, 'rgba(255, 255, 255, 0.2)');
-  
+
         if (this.chart) {
           this.chart.destroy();
         }
-  
+
         const xAxisSettings = this.getXAxisSettings(labels);
-  
+
         const config: ChartConfiguration<ChartType, number[], string> = {
           type: 'line',
           data: {
@@ -398,7 +418,7 @@ export class MybankComponent implements OnInit, OnDestroy {
             },
           },
         };
-  
+
         this.chart = new Chart(ctx, config);
       }
     }
@@ -440,29 +460,30 @@ export class MybankComponent implements OnInit, OnDestroy {
   }
 
   submitWithdraw() {
-    if (this.telegramService.isTelegramWebAppAvailable()) {
-      this.telegramService.showAlert('Expect payment within 24 hours while we review your transaction');
-    } else {
-      console.warn('Telegram WebApp is not available');
-    }
-    
     if (this.isAddressValid && this.referralBalance > 0 && this.withdrawAmount > 0) {
       const withdrawData = {
         payment_system: this.paymentSystem,
         withdraw_amount: this.withdrawAmount,
         withdraw_address: this.withdrawAddress
       };
-  
+
       this.authService.withdrawFunds(withdrawData).subscribe(
         (response) => {
           console.log('Withdrawal successful', response);
-          this.closeModal();
+          // this.closeModal();
           this.getReferalBalance();
         },
         (error) => {
           console.error('Withdrawal failed', error);
         }
       );
+
+      if (this.telegramService.isTelegramWebAppAvailable()) {
+        this.telegramService.showAlert('Expect payment within 24 hours while we review your transaction');
+        this.closeModal();
+      } else {
+        this.telegramService.showAlert('Telegram WebApp is not available');
+      }
     }
   }
 
@@ -475,6 +496,10 @@ export class MybankComponent implements OnInit, OnDestroy {
     }
     if (typeof this.resizeListener === 'function') {
       this.resizeListener();
+    }
+
+    if (this.updateCacheInterval) {
+      clearInterval(this.updateCacheInterval);
     }
   }
 }

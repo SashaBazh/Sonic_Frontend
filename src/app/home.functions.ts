@@ -286,24 +286,30 @@ export function copyReferralLink(referralLink: string, telegramService: Telegram
 // ПОЛУЧЕНИЕ ЦЕНЫ ТОКЕНА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function getCurrentPrice(component?: any): Promise<number | null> {
-    const apiUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=harrypotterobamasonic10in&vs_currencies=usd';
-    const apiKey = 'CG-4bxNeYA1yhCsz7N2mZsd3LGN'; // Вставьте ваш API ключ сюда
+    const apiUrl = 'https://pro-api.coingecko.com/api/v3/simple/price?ids=harrypotterobamasonic10in&vs_currencies=usd';
+    const apiKey = 'CG-4bxNeYA1yhCsz7N2mZsd3LGN'; // Замените на ваш Pro API ключ
 
     return fetch(apiUrl, {
         headers: {
-            'Authorization': `Bearer ${apiKey}`
+            'x-cg-pro-api-key': apiKey
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data && data.harrypotterobamasonic10in && data.harrypotterobamasonic10in.usd !== undefined) {
             return data.harrypotterobamasonic10in.usd;
         } else {
+            console.error('Unexpected data structure:', data);
             return null;
         }
     })
     .catch(error => {
-        console.error('Error fetching current price:', error);
+        console.error('Error fetching current price:', error.message);
         return null;
     });
 }

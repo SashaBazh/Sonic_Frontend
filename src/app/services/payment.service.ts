@@ -75,36 +75,31 @@ export class PaymentService {
       );
   }
 
-  private APIURL = 'https://api.coingecko.com/api/v3';
-  private API_KEY = 'CG-4bxNeYA1yhCsz7N2mZsd3LGN'; // Вставьте ваш API ключ здесь
+  private APIURL = 'https://pro-api.coingecko.com/api/v3';
+  private API_KEY = 'CG-4bxNeYA1yhCsz7N2mZsd3LGN'; // Замените на ваш Pro API ключ
   private priceCache: { [key: string]: { price: number, timestamp: number } } = {};
   private CACHE_DURATION = 60000; // 1 minute
 
   getPrice(coinId: string, originalPrice: number): Observable<number> {
     const cachedData = this.priceCache[coinId];
     if (cachedData && Date.now() - cachedData.timestamp < this.CACHE_DURATION) {
-      // alert(`Используем кэшированные данные для ${coinId}: ${cachedData.price}`);
       return of(cachedData.price);
     }
 
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.API_KEY}`);
+    const headers = new HttpHeaders().set('x-cg-pro-api-key', this.API_KEY);
 
     return this.http.get<any>(`${this.APIURL}/simple/price?ids=${coinId},harrypotterobamasonic10in&vs_currencies=usd`, { headers })
       .pipe(
         map(response => {
-          // alert('Ответ от API CoinGecko: ' + JSON.stringify(response));
           const coinPrice = response[coinId].usd;
           const harryPrice = response['harrypotterobamasonic10in'].usd;
-          // alert(`Цена ${coinId} в USD: ${coinPrice}`);
-          // alert('Цена Harry Potter токена в USD: ' + harryPrice);
           const exchangeRate = harryPrice / coinPrice;
-          // alert('Рассчитанный курс обмена: ' + exchangeRate);
           this.priceCache[coinId] = { price: exchangeRate, timestamp: Date.now() };
           return exchangeRate;
         }),
         catchError(error => {
-          // alert('Ошибка при получении цены: ' + error.message);
-          return of(this.priceCache[coinId]?.price || 1);
+          console.error('Ошибка при получении цены:', error.message);
+          return of(this.priceCache[coinId]?.price || originalPrice);
         })
       );
   }
