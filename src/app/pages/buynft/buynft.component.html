@@ -155,12 +155,11 @@
                       <span class="dropdown-arrow" [class.open]="isDropdownOpen"></span>
                     </button>
                     <ul class="dropdown-menu" [class.show]="isDropdownOpen">
-                      <li *ngFor="let currency of currencies" (click)="selectCurrency(currency)">
+                      <li *ngFor="let currency of supportedCurrencies" (click)="selectCurrency(currency)">
                         {{ currency }}
                       </li>
                     </ul>
                   </div>
-
 
                   <div class="button-container">
                     <ng-container *ngIf="buyOption === 'usd'">

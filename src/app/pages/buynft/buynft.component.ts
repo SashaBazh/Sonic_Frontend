@@ -57,7 +57,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   isDropdownOpen = false;
 
   buyOption: 'usd' | 'star' = 'usd';
-  selectedCurrency = 'harrypotterobamasonic10inu';
+  // selectedCurrency = 'harrypotterobamasonic10inu';
   currencies = ['harrypotterobamasonic10inu(ERC-20)', 'TON', 'USDT(BSC)', 'USDT(TRON)'];
 
   selectedAmount: number = 0;
@@ -87,13 +87,16 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   loadError: boolean = false;
   purchaseSuccess: boolean = false;
 
-  supportedCurrencies: string[] = [];
   paymentDetails: any;
   isLoading: boolean | undefined;
   isLoadingPrice: boolean = true;
   now = new Date(new Date().toUTCString());
 
   originalPrice: number = 0;
+
+
+  selectedCurrency: string = ''; // Выбранная валюта
+  supportedCurrencies: string[] = [];
 
   constructor(
     private nftService: NftService,
@@ -130,6 +133,22 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadNfts();
     this.loadSupportedCurrencies();
     this.setupBackButton(this.router.url);
+  }
+
+  loadSupportedCurrencies() {
+    this.paymentService.getSupportedCurrencies().subscribe(
+      (currencies) => {
+        this.supportedCurrencies = currencies;
+        // Устанавливаем первую валюту из списка как выбранную по умолчанию
+        if (currencies.length > 0) {
+          this.selectedCurrency = currencies[0];
+        }
+      },
+      (error) => {
+        console.error('Ошибка при загрузке списка валют:', error);
+        // Обработка ошибки загрузки списка валют
+      }
+    );
   }
 
   ngAfterViewInit() {
@@ -302,15 +321,15 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
     this.overlay.nativeElement.style.display = 'none';
   }
 
-  loadSupportedCurrencies() {
-    this.paymentService.getSupportedCurrencies().subscribe(
-      (currencies) => {
-        this.supportedCurrencies = currencies;
-      },
-      (error) => {
-      }
-    );
-  }
+  // loadSupportedCurrencies() {
+  //   this.paymentService.getSupportedCurrencies().subscribe(
+  //     (currencies) => {
+  //       this.supportedCurrencies = currencies;
+  //     },
+  //     (error) => {
+  //     }
+  //   );
+  // }
 
   async buyNFT() {
     this.openModal_buy();
@@ -318,6 +337,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.selectedNFT) {
         this.isCheckingPayment = true;
         this.isQRCodeLoading = true;
+        alert(this.selectedCurrency);
         this.paymentService.createPayment(this.selectedNFT.nft_id, this.selectedCurrency).subscribe(
           async (response) => {
             const currentDate = new Date();
