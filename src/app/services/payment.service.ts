@@ -15,6 +15,7 @@ interface CreatePaymentResponse {
   pay_amount: number;
   pay_currency: string;
   expires_at: string;
+  memo: string;
 }
 
 interface CheckPaymentResponse {

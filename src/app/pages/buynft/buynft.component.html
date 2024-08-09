@@ -191,6 +191,14 @@
                         <img src="../../../assets/images/icons/home_referral.png" alt="copy icon" width="16">
                     </i>
                 </div>
+
+                 <div class="nft-purchase-amount" *ngIf="selectedCurrency === 'TON'">
+                    <span> {{ memo }}</span>
+                    <i class="copy-icon" (click)="copyToClipboard(memo + '')">
+                        <img src="../../../assets/images/icons/home_referral.png" alt="copy icon" width="16">
+                    </i>
+                  </div>
+
                 <div class="nft-purchase-qr-code">
                     <div *ngIf="isQRCodeLoading" class="loading-indicator">
                         <div class="loading-spinner"></div>

@@ -79,6 +79,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
   isNftActive: boolean = false;
 
   paymentId: number | null = null;
+  memo: string = '';
   paymentCheckInterval: Subscription | null = null;
 
   isLoadingCurrentNFT: boolean = false;
@@ -345,6 +346,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
             this.expiresAt = new Date(response.expires_at.replace('T', 'T'));
 
             this.paymentId = response.payment_id;
+            this.memo = response.memo;
             this.address = response.pay_address;
             this.qrCodeUrl = await this.generateQRCode();
             // this.selectedCurrency = 'harrypotterobamasonic10inu';
