@@ -338,7 +338,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.selectedNFT) {
         this.isCheckingPayment = true;
         this.isQRCodeLoading = true;
-        alert(this.selectedCurrency);
+        // alert(this.selectedCurrency);
         this.paymentService.createPayment(this.selectedNFT.nft_id, this.selectedCurrency).subscribe(
           async (response) => {
             const currentDate = new Date();
