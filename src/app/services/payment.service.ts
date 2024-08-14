@@ -38,7 +38,7 @@ interface CancelPaymentResponse {
   providedIn: 'root'
 })
 export class PaymentService {
-  private apiUrl = 'https://harrypotterobamasonic10.com/api/';
+  private apiUrl = 'https://sonic.testservisedomain.online/api/';
 
   constructor(private http: HttpClient) { }
 
