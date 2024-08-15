@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, throwError, BehaviorSubject, of } from 'rxjs';
 import { catchError, tap, retry, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { API_URL } from '../constants';
 
 
 @Injectable({
@@ -10,7 +11,7 @@ import { Router } from '@angular/router';
 })
 
 export class GameService {
-  public static readonly API_URL = 'https://sonic.testservisedomain.online/api/';
+  // public static readonly API_URL = 'https://sonic.testservisedomain.online/api/';
 
   private lastGameTime: Date | null = null;
 
@@ -44,7 +45,7 @@ export class GameService {
       game_points: score,
       is_win: isWin
     };
-    return this.http.post<any>(`${GameService.API_URL}home/add-game-points`, payload, { headers: GameService.headers }).pipe(
+    return this.http.post<any>(`${API_URL}home/add-game-points`, payload, { headers: GameService.headers }).pipe(
       tap(response => {
         console.log('Game result submitted successfully:', response);
         if (response.new_balance !== undefined) {

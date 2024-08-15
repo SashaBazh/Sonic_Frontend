@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, Observable, of } from 'rxjs';
 import { NftService } from './nft.service';
+import { API_URL } from '../constants';
 
 interface CreatePaymentRequest {
   nft_id: number;
@@ -38,7 +39,7 @@ interface CancelPaymentResponse {
   providedIn: 'root'
 })
 export class PaymentService {
-  private apiUrl = 'https://sonic.testservisedomain.online/api/';
+  // private apiUrl = 'https://sonic.testservisedomain.online/api/';
 
   constructor(private http: HttpClient) { }
 
@@ -46,31 +47,31 @@ export class PaymentService {
 
   createPayment(nftId: number, currency: string): Observable<CreatePaymentResponse> {
     const request: CreatePaymentRequest = { nft_id: nftId, currency: currency };
-    return this.http.post<CreatePaymentResponse>(`${this.apiUrl}payment/create`, request, { headers: PaymentService.headers });
+    return this.http.post<CreatePaymentResponse>(`${API_URL}payment/create`, request, { headers: PaymentService.headers });
   }
 
   // ПОЛУЧЕНИЕ С БЭКА ИНФУ О ПРОВЕРКЕ ОПЛАТЫ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   checkPayment(paymentId: number): Observable<CheckPaymentResponse> {
-    return this.http.get<CheckPaymentResponse>(`${this.apiUrl}payment/check/${paymentId}`, { headers: PaymentService.headers });
+    return this.http.get<CheckPaymentResponse>(`${API_URL}payment/check/${paymentId}`, { headers: PaymentService.headers });
   }
 
   // ПОЛУЧЕНИЕ С БЭКА ИНФУ О СИМУЛЯЦИИ ОПЛАТЫ ВРОДЕ КАК БОЛЬШЕ НЕ ЮЗАЕТСЯ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   simulatePayment(paymentId: number): Observable<SimulatePaymentResponse> {
-    return this.http.post<SimulatePaymentResponse>(`${this.apiUrl}payment/simulate-payment/${paymentId}`, {}, { headers: PaymentService.headers });
+    return this.http.post<SimulatePaymentResponse>(`${API_URL}payment/simulate-payment/${paymentId}`, {}, { headers: PaymentService.headers });
   }
 
   // ПОЛУЧЕНИЕ С БЭКА ИНФУ ОБ ОТМЕНЕ ОПЛАТЫ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   cancelPayment(paymentId: number): Observable<CancelPaymentResponse> {
-    return this.http.delete<CancelPaymentResponse>(`${this.apiUrl}payment/cancel/${paymentId}`, { headers: PaymentService.headers });
+    return this.http.delete<CancelPaymentResponse>(`${API_URL}payment/cancel/${paymentId}`, { headers: PaymentService.headers });
   }
 
   // ПОЛУЧЕНИЕ С БЭКА ИНФУ О ДОСТУПНЫХ ВАЛЮТАХ ДЛЯ ОПЛАТЫ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getSupportedCurrencies(): Observable<string[]> {
-    return this.http.get<{ currencies: string[] }>(`${this.apiUrl}payment/supported-currencies`, { headers: NftService.headers })
+    return this.http.get<{ currencies: string[] }>(`${API_URL}payment/supported-currencies`, { headers: NftService.headers })
       .pipe(
         map(response => response.currencies)
       );

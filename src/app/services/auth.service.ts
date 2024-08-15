@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap, retry, map } from 'rxjs/operators';
+import { API_URL } from '../constants';
 
 // ХУЙНЯ ГДЕ ИЗНАЧАЛЬНО НАХОДИЛИСЬ ВСЕ ЗАПРОСЫ К БЭКУ 
 // ПОТОМ ПО ТИХУ РАССТАВЛЯЛ В НУЖНЫЕ СЕРВИСЫ
@@ -83,7 +84,7 @@ interface ReferralEnergyResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  public static readonly API_URL = 'https://sonic.testservisedomain.online/api/';
+  // public static readonly API_URL = 'https://sonic.testservisedomain.online/api/';
 
   private lastGameTime: Date | null = null;
 
@@ -123,14 +124,14 @@ export class AuthService {
   }
 
   getAvailableTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${AuthService.API_URL}task/`, { headers: AuthService.headers }).pipe(
+    return this.http.get<Task[]>(`${API_URL}task/`, { headers: AuthService.headers }).pipe(
       tap(tasks => this.tasksSubject.next(tasks)),
       catchError(this.handleError)
     );
   }
 
   completeTask(taskId: number): Observable<any> {
-    return this.http.post<any>(`${AuthService.API_URL}task/`, { task_id: taskId }, { headers: AuthService.headers }).pipe(
+    return this.http.post<any>(`${API_URL}task/`, { task_id: taskId }, { headers: AuthService.headers }).pipe(
       tap(response => {
         const currentTasks = this.tasksSubject.value;
         const updatedTasks = currentTasks.map(task =>
@@ -153,7 +154,7 @@ export class AuthService {
 
 
   playGame(): Observable<any> {
-    return this.http.get<any>(`${AuthService.API_URL}home/game-status`, { headers: AuthService.headers }).pipe(
+    return this.http.get<any>(`${API_URL}home/game-status`, { headers: AuthService.headers }).pipe(
       tap(response => {
         if (response.can_game) {
           this.lastGameTime = new Date();
@@ -170,7 +171,7 @@ export class AuthService {
       game_points: score,
       is_win: isWin
     };
-    return this.http.post<any>(`${AuthService.API_URL}home/add-game-points`, payload, { headers: AuthService.headers }).pipe(
+    return this.http.post<any>(`${API_URL}home/add-game-points`, payload, { headers: AuthService.headers }).pipe(
       tap(response => {
         if (response.new_balance !== undefined) {
           this.updateBalance(response.new_balance);
@@ -191,7 +192,7 @@ export class AuthService {
   }
 
   getReferralEnergy(): Observable<number> {
-    return this.http.get<ReferralEnergyResponse>(`${AuthService.API_URL}team/referrals-energy`, { headers: AuthService.headers })
+    return this.http.get<ReferralEnergyResponse>(`${API_URL}team/referrals-energy`, { headers: AuthService.headers })
       .pipe(
         map(response => response.referrals_energy),
         tap(energy => this.updateReferralEnergy(energy)),
@@ -201,7 +202,7 @@ export class AuthService {
   }
 
   getMostExpensiveNft(): Observable<UserNftResponse> {
-    return this.http.get<UserNftResponse>(`${AuthService.API_URL}nft/my`, { headers: AuthService.headers })
+    return this.http.get<UserNftResponse>(`${API_URL}nft/my`, { headers: AuthService.headers })
       .pipe(
         tap(response => {
           if (response.nft && response.is_active) {
@@ -214,7 +215,7 @@ export class AuthService {
   }
 
   getAllUserNfts(): Observable<UserNftResponse> {
-    return this.http.get<UserNftResponse>(`${AuthService.API_URL}nft/my-all`, { headers: AuthService.headers })
+    return this.http.get<UserNftResponse>(`${API_URL}nft/my-all`, { headers: AuthService.headers })
       .pipe(
         retry(3),
         catchError(this.handleError)
@@ -225,7 +226,7 @@ export class AuthService {
   }
 
   getUserBalance(): Observable<number> {
-    return this.http.get<UserResponse>(`${AuthService.API_URL}user/balances`, { headers: AuthService.headers })
+    return this.http.get<UserResponse>(`${API_URL}user/balances`, { headers: AuthService.headers })
       .pipe(
         map(response => response.sonic_balance),
         tap(balance => this.updateBalance(balance)),
@@ -235,7 +236,7 @@ export class AuthService {
   }
 
   getUserReferralBalance(): Observable<number> {
-    return this.http.get<UserResponse>(`${AuthService.API_URL}user/balances`, { headers: AuthService.headers })
+    return this.http.get<UserResponse>(`${API_URL}user/balances`, { headers: AuthService.headers })
       .pipe(
         map(response => response.referral_balance),
         tap(balance => {
@@ -247,7 +248,7 @@ export class AuthService {
   }
 
   getUserTotalReferralBalance(): Observable<number> {
-    return this.http.get<{ real_money: number }>(`${AuthService.API_URL}team/real-money`, { headers: AuthService.headers })
+    return this.http.get<{ real_money: number }>(`${API_URL}team/real-money`, { headers: AuthService.headers })
       .pipe(
         map(response => response.real_money),
         tap(balance => {
@@ -275,7 +276,7 @@ export class AuthService {
   }
 
   getTotalMembers(): Observable<number> {
-    return this.http.get<{ total_members: number }>(`${AuthService.API_URL}team/total-members`, { headers: AuthService.headers })
+    return this.http.get<{ total_members: number }>(`${API_URL}team/total-members`, { headers: AuthService.headers })
       .pipe(
         map(response => response.total_members),
         tap(total => this.updateTotalMembers(total)),
@@ -285,7 +286,7 @@ export class AuthService {
   }
 
   getReferralsCount(): Observable<number> {
-    return this.http.get<{ total_referrals: number }>(`${AuthService.API_URL}team/referrals-count`, { headers: AuthService.headers })
+    return this.http.get<{ total_referrals: number }>(`${API_URL}team/referrals-count`, { headers: AuthService.headers })
       .pipe(
         map(response => response.total_referrals),
         tap(total => this.updateTotalReferrals(total)),
@@ -303,7 +304,7 @@ export class AuthService {
   }
 
   getLeftEnergy(): Observable<number> {
-    return this.http.get<EnergyResponse>(`${AuthService.API_URL}home/left-energy`, { headers: AuthService.headers })
+    return this.http.get<EnergyResponse>(`${API_URL}home/left-energy`, { headers: AuthService.headers })
       .pipe(
         map(response => response.left_energy),
         tap(energy => this.updateEnergy(energy)),
@@ -317,7 +318,7 @@ export class AuthService {
   }
 
   click(): Observable<number> {
-    return this.http.post<ClickResponse>(`${AuthService.API_URL}home/click`, {}, { headers: AuthService.headers }).pipe(
+    return this.http.post<ClickResponse>(`${API_URL}home/click`, {}, { headers: AuthService.headers }).pipe(
       map(response => response.clicks),
       tap(clicks => {
         console.log('Click registered successfully:', clicks);
@@ -329,7 +330,7 @@ export class AuthService {
   }
 
   getLeaderboardSonics(): Observable<LeaderboardResponse> {
-    return this.http.get<LeaderboardResponse>(`${AuthService.API_URL}home/leader-board-sonics`, { headers: AuthService.headers })
+    return this.http.get<LeaderboardResponse>(`${API_URL}home/leader-board-sonics`, { headers: AuthService.headers })
       .pipe(
         retry(3),
         catchError(this.handleError)
@@ -337,7 +338,7 @@ export class AuthService {
   }
 
   getLeaderboardReferrals(): Observable<LeaderboardResponse> {
-    return this.http.get<LeaderboardResponse>(`${AuthService.API_URL}home/leader-board-referrals`, { headers: AuthService.headers })
+    return this.http.get<LeaderboardResponse>(`${API_URL}home/leader-board-referrals`, { headers: AuthService.headers })
       .pipe(
         retry(3),
         catchError(this.handleError)
@@ -345,7 +346,7 @@ export class AuthService {
   }
 
   getLeaderboardSpentNFT(): Observable<LeaderboardResponse> {
-    return this.http.get<LeaderboardResponse>(`${AuthService.API_URL}home/leader-board-spent-nft`, { headers: AuthService.headers })
+    return this.http.get<LeaderboardResponse>(`${API_URL}home/leader-board-spent-nft`, { headers: AuthService.headers })
       .pipe(
         retry(3),
         catchError(this.handleError)
@@ -353,7 +354,7 @@ export class AuthService {
   }
 
   getReferralLink(): Observable<string> {
-    return this.http.get<any>(`${AuthService.API_URL}home/referral-link`, { headers: AuthService.headers }).pipe(
+    return this.http.get<any>(`${API_URL}home/referral-link`, { headers: AuthService.headers }).pipe(
       map(response => response.referral_link),
       tap(link => {
         this.referralLinkSubject.next(link);
@@ -368,21 +369,21 @@ export class AuthService {
   }
 
   toggleAutoClicker(): Observable<any> {
-    return this.http.post(`${AuthService.API_URL}/auto-clicker`, {}, { headers: AuthService.headers }).pipe(
+    return this.http.post(`${API_URL}/auto-clicker`, {}, { headers: AuthService.headers }).pipe(
       retry(3),
       catchError(this.handleError)
     );
   }
 
   getAutoClickerStatus(): Observable<any> {
-    return this.http.get(`${AuthService.API_URL}/auto-clicker`, { headers: AuthService.headers }).pipe(
+    return this.http.get(`${API_URL}/auto-clicker`, { headers: AuthService.headers }).pipe(
       retry(3),
       catchError(this.handleError)
     );
   }
 
   addGamePoints(points: number): Observable<any> {
-    return this.http.post(`${AuthService.API_URL}/add-game-points`, { game_points: points }, { headers: AuthService.headers }).pipe(
+    return this.http.post(`${API_URL}/add-game-points`, { game_points: points }, { headers: AuthService.headers }).pipe(
       retry(3),
       catchError(this.handleError)
     );
@@ -394,7 +395,7 @@ export class AuthService {
     withdraw_amount: number,
     withdraw_address: string
   }): Observable<any> {
-    return this.http.post(`${AuthService.API_URL}user/withdraw`, withdrawData, { headers: AuthService.headers })
+    return this.http.post(`${API_URL}user/withdraw`, withdrawData, { headers: AuthService.headers })
       .pipe(
         retry(3),
         catchError(this.handleError)

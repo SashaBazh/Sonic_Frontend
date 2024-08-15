@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { API_URL } from '../constants';
 
 interface Task {
   task_id: number;
@@ -15,7 +16,7 @@ interface Task {
   providedIn: 'root'
 })
 export class TaskService {
-  public static readonly API_URL = 'https://sonic.testservisedomain.online/api/';
+  // public static readonly API_URL = 'https://sonic.testservisedomain.online/api/';
 
   private tasksSubject = new BehaviorSubject<Task[]>([]);
   public tasks$ = this.tasksSubject.asObservable();
@@ -30,7 +31,7 @@ export class TaskService {
   // ПОЛУЧЕНИЕ С БЭКА ДОСТУПНЫХ ЗАДАНИЙ К ВЫПОЛНЕНИЮ  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getAvailableTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${TaskService.API_URL}task/`, { headers: TaskService.headers }).pipe(
+    return this.http.get<Task[]>(`${API_URL}task/`, { headers: TaskService.headers }).pipe(
       tap(tasks => {
         this.tasksSubject.next(tasks);
       }),
@@ -43,7 +44,7 @@ export class TaskService {
   // ПОЛУЧЕНИЕ С БЭКА ВОПОЛНЕНО ЛИ ЗАДАНИЕ   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   completeTask(taskId: number): Observable<any> {
-    return this.http.post<any>(`${TaskService.API_URL}task/`, { task_id: taskId }, { headers: TaskService.headers }).pipe(
+    return this.http.post<any>(`${API_URL}task/`, { task_id: taskId }, { headers: TaskService.headers }).pipe(
       tap(response => {
         const currentTasks = this.tasksSubject.value;
         const updatedTasks = currentTasks.map(task =>

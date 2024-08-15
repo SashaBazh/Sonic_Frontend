@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject, interval, forkJoin } from 'rxjs';
 import { catchError, tap, retry, map, switchMap } from 'rxjs/operators';
+import { API_URL } from '../constants';
 
 interface LeaderboardEntry {
   user_id: string;
@@ -77,7 +78,7 @@ interface EnergyResponse {
 })
 export class HomeService {
 
-  public static readonly API_URL = 'https://sonic.testservisedomain.online/api/';
+  // public static readonly API_URL = 'https://sonic.testservisedomain.online/api/';
 
   private lastGameTime: Date | null = null;
 
@@ -115,7 +116,7 @@ export class HomeService {
   // ПОЛУЧЕНИЕ С БЭКА СТАТУСА О ВОЗМОЖНОСТИ ИГРАТЬ В ИГРУ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   playGame(): Observable<any> {
-    return this.http.get<any>(`${HomeService.API_URL}home/game-status`, { headers: HomeService.headers }).pipe(
+    return this.http.get<any>(`${API_URL}home/game-status`, { headers: HomeService.headers }).pipe(
       tap(response => {
         console.log('Game status:', response);
         if (response.can_game) {
@@ -154,7 +155,7 @@ export class HomeService {
       game_points: score,
       is_win: isWin
     };
-    return this.http.post<any>(`${HomeService.API_URL}home/add-game-points`, payload, { headers: HomeService.headers }).pipe(
+    return this.http.post<any>(`${API_URL}home/add-game-points`, payload, { headers: HomeService.headers }).pipe(
       tap(response => {
         console.log('Game result submitted successfully:', response);
         if (response.new_balance !== undefined) {
@@ -171,7 +172,7 @@ export class HomeService {
   // ПОЛУЧЕНИЕ С БЭКА ТЕКУЩЕЙ NFT ЮЗЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getMostExpensiveNft(): Observable<UserNftResponse> {
-    return this.http.get<UserNftResponse>(`${HomeService.API_URL}nft/my`, { headers: HomeService.headers })
+    return this.http.get<UserNftResponse>(`${API_URL}nft/my`, { headers: HomeService.headers })
       .pipe(
         tap(response => {
           if (response.nft && response.is_active) {
@@ -186,7 +187,7 @@ export class HomeService {
   // ПОЛУЧЕНИЕ С БЭКА ИНФУ О ДОСТУПНЫХ NFT ДЛЯ ИЗЕРА ЧТО БЫ ВЫШЕ ИСКАТЬ ИЗ НИК САМУЮ ДОРОГУЮ ТО ЕСТЬ ТЕКУЩУЮ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getAllUserNfts(): Observable<UserNftResponse> {
-    return this.http.get<UserNftResponse>(`${HomeService.API_URL}nft/my-all`, { headers: HomeService.headers })
+    return this.http.get<UserNftResponse>(`${API_URL}nft/my-all`, { headers: HomeService.headers })
       .pipe(
         retry(3),
         catchError(this.handleError)
@@ -203,7 +204,7 @@ export class HomeService {
   // ПОЛУЧЕНИЕ С БЭКА БАЛАНС ЮЗЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getUserBalance(): Observable<number> {
-    return this.http.get<UserResponse>(`${HomeService.API_URL}user/balances`, { headers: HomeService.headers })
+    return this.http.get<UserResponse>(`${API_URL}user/balances`, { headers: HomeService.headers })
       .pipe(
         map(response => response.sonic_balance),
         tap(balance => this.updateBalance(balance)),
@@ -219,7 +220,7 @@ export class HomeService {
   // ПОЛУЧЕНИЕ С БЭКА ОСТАВШУЮСЯ ЕНЕРГИЮ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getLeftEnergy(): Observable<number> {
-    return this.http.get<EnergyResponse>(`${HomeService.API_URL}home/left-energy`, { headers: HomeService.headers })
+    return this.http.get<EnergyResponse>(`${API_URL}home/left-energy`, { headers: HomeService.headers })
       .pipe(
         map(response => response.left_energy),
         tap(energy => this.updateEnergy(energy)),
@@ -236,7 +237,7 @@ export class HomeService {
   // РЕГИСТРАЦИЯ КЛИКА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   click(): Observable<number> {
-    return this.http.post<ClickResponse>(`${HomeService.API_URL}home/click`, {}, { headers: HomeService.headers }).pipe(
+    return this.http.post<ClickResponse>(`${API_URL}home/click`, {}, { headers: HomeService.headers }).pipe(
       map(response => response.clicks),
       tap(clicks => {
         // alert(`Click registered successfully: ${clicks}`);
@@ -251,7 +252,7 @@ export class HomeService {
   }
   
   sendClickBatch(clickBatch: ClickBatch): Observable<ClickResponse> {
-    return this.http.post<ClickResponse>(`${HomeService.API_URL}home/click`, clickBatch, { headers: HomeService.headers }).pipe(
+    return this.http.post<ClickResponse>(`${API_URL}home/click`, clickBatch, { headers: HomeService.headers }).pipe(
       tap(response => {
       }),
       catchError(error => {
@@ -263,7 +264,7 @@ export class HomeService {
   // ПОЛУЧЕНИЕ С БЭКА ИНФУ О ЛИДЕРБОРДАХ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getLeaderboardSonics(): Observable<LeaderboardResponse> {
-    return this.http.get<LeaderboardResponse>(`${HomeService.API_URL}home/leader-board-sonics`, { headers: HomeService.headers })
+    return this.http.get<LeaderboardResponse>(`${API_URL}home/leader-board-sonics`, { headers: HomeService.headers })
       .pipe(
         retry(3),
         catchError(this.handleError)
@@ -271,7 +272,7 @@ export class HomeService {
   }
 
   getLeaderboardReferrals(): Observable<LeaderboardResponse> {
-    return this.http.get<LeaderboardResponse>(`${HomeService.API_URL}home/leader-board-referrals`, { headers: HomeService.headers })
+    return this.http.get<LeaderboardResponse>(`${API_URL}home/leader-board-referrals`, { headers: HomeService.headers })
       .pipe(
         retry(3),
         catchError(this.handleError)
@@ -279,7 +280,7 @@ export class HomeService {
   }
 
   getLeaderboardSpentNFT(): Observable<LeaderboardResponse> {
-    return this.http.get<LeaderboardResponse>(`${HomeService.API_URL}home/leader-board-spent-nft`, { headers: HomeService.headers })
+    return this.http.get<LeaderboardResponse>(`${API_URL}home/leader-board-spent-nft`, { headers: HomeService.headers })
       .pipe(
         retry(3),
         catchError(this.handleError)
@@ -289,7 +290,7 @@ export class HomeService {
   // ПОЛУЧЕНИЕ С БЭКА РЕФКУ ЮЗЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getReferralLink(): Observable<string> {
-    return this.http.get<any>(`${HomeService.API_URL}home/referral-link`, { headers: HomeService.headers }).pipe(
+    return this.http.get<any>(`${API_URL}home/referral-link`, { headers: HomeService.headers }).pipe(
       map(response => response.referral_link),
       tap(link => {
         console.log('Referral link received:', link);
@@ -307,7 +308,7 @@ export class HomeService {
   // ХУЙНЯ ДЛЯ АВТОКЛИКЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   toggleAutoClicker(): Observable<any> {
-    return this.http.post(`${HomeService.API_URL}home/auto-clicker/activate`, {}, { headers: HomeService.headers }).pipe(
+    return this.http.post(`${API_URL}home/auto-clicker/activate`, {}, { headers: HomeService.headers }).pipe(
       catchError(error => {
         if (error.status === 403) {
           return throwError(() => new Error("y"));
@@ -319,7 +320,7 @@ export class HomeService {
   }
 
   getAutoClickerStatus(): Observable<AutoClickerStatus> {
-    return this.http.get<AutoClickerStatus>(`${HomeService.API_URL}home/auto-clicker/status`, { headers: HomeService.headers }).pipe(
+    return this.http.get<AutoClickerStatus>(`${API_URL}home/auto-clicker/status`, { headers: HomeService.headers }).pipe(
       catchError(this.handleError)
     );
   }
@@ -331,7 +332,7 @@ export class HomeService {
   }
 
   private processAutoClicker(): Observable<any> {
-    return this.http.post<{ clicks_added: number }>(`${HomeService.API_URL}home/auto-clicker/process`, {}, { headers: HomeService.headers });
+    return this.http.post<{ clicks_added: number }>(`${API_URL}home/auto-clicker/process`, {}, { headers: HomeService.headers });
   }
 
   public static get headers(): HttpHeaders {

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap, retry } from 'rxjs/operators';
+import { API_URL } from '../constants';
 
 interface NftResponse {
   nft_id: number;
@@ -27,7 +28,7 @@ interface UserNftResponse {
   providedIn: 'root'
 })
 export class NftService {
-  private API_URL = 'https://sonic.testservisedomain.online/api/';
+  // private API_URL = 'https://sonic.testservisedomain.online/api/';
 
   public currentNFT: UserNftResponse | undefined;
 
@@ -36,13 +37,13 @@ export class NftService {
   // ПОЛУЧЕНИЕ С БЭКА ИНФУ О ДОСТУПНЫХ NFT //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getAvailableNfts(): Observable<any> {
-    return this.http.get(`${this.API_URL}nft/available`, { headers: NftService.headers });
+    return this.http.get(`${API_URL}nft/available`, { headers: NftService.headers });
   }
 
   // ПОЛУЧЕНИЕ С БЭКА ИНФУ О ТЕКУЩЕЙ NFT ЮЗЕРА //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   getCurrentNft(): Observable<UserNftResponse> {
-    return this.http.get<UserNftResponse>(`${this.API_URL}nft/my`, { headers: NftService.headers })
+    return this.http.get<UserNftResponse>(`${API_URL}nft/my`, { headers: NftService.headers })
       .pipe(
         tap(response => {
           if (response) {
