@@ -460,30 +460,31 @@ fetchChartData(range: string) {
   }
 
   submitWithdraw() {
-    if (this.isAddressValid && this.referralBalance > 0 && this.withdrawAmount > 0) {
+    // alert(this.withdrawAmount);
+    // alert(this.referralBalance);
+    if (this.withdrawAmount <= this.referralBalance) {
       const withdrawData = {
         payment_system: this.paymentSystem,
         withdraw_amount: this.withdrawAmount,
         withdraw_address: this.withdrawAddress
       };
 
-      this.authService.withdrawFunds(withdrawData).subscribe(
-        (response) => {
-          console.log('Withdrawal successful', response);
-          // this.closeModal();
-          this.getReferalBalance();
-        },
-        (error) => {
-          console.error('Withdrawal failed', error);
-        }
-      );
-
       if (this.telegramService.isTelegramWebAppAvailable()) {
+        // alert("Зашло2");
         this.telegramService.showAlert('Expect payment within 24 hours while we review your transaction');
         this.closeModal();
       } else {
         this.telegramService.showAlert('Telegram WebApp is not available');
       }
+
+      this.authService.withdrawFunds(withdrawData).subscribe(
+        (response) => {
+          this.getReferalBalance();
+          // alert("Зашло");
+        },
+        (error) => {
+        }
+      );
     }
   }
 

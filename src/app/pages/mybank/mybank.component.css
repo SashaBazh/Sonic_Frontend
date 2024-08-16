@@ -292,7 +292,7 @@ canvas {
     pointer-events: auto;
     display: none;
     position: fixed;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: linear-gradient(135deg, #000080, #1E90FF);
@@ -313,13 +313,13 @@ canvas {
     transition: all 0.3s ease;
 }
 
-.modal-content:hover {
+/* .modal-content:hover {
     transform: translate(-50%, -50%) scale(1.05);
     box-shadow:
         0 0 40px rgba(255, 215, 0, 0.8),
         0 0 80px rgba(30, 144, 255, 0.6),
         inset 0 0 30px rgba(255, 255, 255, 0.3);
-}
+} */
 
 .modal {
     display: none;
@@ -367,9 +367,9 @@ h2 {
     border-radius: 10px;
 }
 
-.balance-box::before {
+/* .balance-box::before {
     content: none;
-}
+} */
 
 .balance-label {
     font-size: 16px;
@@ -390,7 +390,7 @@ h2 {
     animation: sonic-pulse 1.5s ease-in-out infinite alternate;
 }
 
-@keyframes sonic-pulse {
+/* @keyframes sonic-pulse {
     0% {
         transform: scale(1);
     }
@@ -402,7 +402,7 @@ h2 {
 
 .balance-box::after {
     content: none;
-}
+} */
 
 .input-group {
     margin-bottom: 20px;
@@ -462,10 +462,10 @@ input:focus {
     transition: all 0.3s ease;
 }
 
-.balance-info:hover {
+/* .balance-info:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 20px rgba(240, 185, 11, 0.5);
-}
+} */
 
 .btc-amount {
     display: block;
@@ -475,7 +475,7 @@ input:focus {
     text-shadow: 0 0 10px rgba(240, 185, 11, 0.5);
 }
 
-@keyframes shine {
+/* @keyframes shine {
     0% {
         transform: translateX(-100%);
     }
@@ -483,9 +483,25 @@ input:focus {
     100% {
         transform: translateX(100%);
     }
-}
+} */
 
 .sonic-button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background: linear-gradient(45deg, #fbda61, #f0b90b);
+    border-radius: 10px;
+    color: #000000;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* .sonic-button {
     display: block;
     width: 100%;
     padding: 12px;
@@ -519,9 +535,10 @@ input:focus {
     background: linear-gradient(45deg, #f0b90b, #fbda61);
     color: #001E58;
     text-shadow: none;
+    z-index: 1002;
 }
 
 .submit-button:hover {
     background: linear-gradient(45deg, #fbda61, #f0b90b);
 }
-
+ */

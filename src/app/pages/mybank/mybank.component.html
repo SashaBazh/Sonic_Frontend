@@ -23,7 +23,7 @@
                 <div class="title">AFFILATE BALANCE USDT / SONIC</div>
                 <div class="amount">
                     <img src="../../../assets/images/icons/mybank_Tcoin.png" alt="coin">
-                    {{ referralBalance | number:'1.2-2' }}
+                    {{ referralBalance }}
                 </div>
                 <button class="mybank_withdraw_button" (click)="openModal($event)">
                     Withdraw funds
@@ -71,7 +71,7 @@
 
         <div class="balance-box">
             <div class="balance-label">SONIC BALANCE</div>
-            <div class="balance-amount"> {{ referralBalance | number:'1.2-2' }}</div>
+            <div class="balance-amount"> {{ referralBalance }}</div>
         </div>
         <div class="input-group">
             <label>PAYMENT SYSTEM</label>
@@ -84,7 +84,7 @@
             <input type="number" [(ngModel)]="withdrawAmount" placeholder="0">
             <span class="withdraw-all" (click)="withdrawAll()">WITHDRAW ALL</span>
         </div>
-        <div class="available">AVAILABLE {{ referralBalance | number:'1.2-2' }} SONIC</div>
+        <div class="available">AVAILABLE {{ referralBalance }} SONIC</div>
         <div class="input-group">
             <label>WITHDRAW ADDRESS</label>
             <input type="text" [(ngModel)]="withdrawAddress" (input)="checkAddress()">
@@ -92,6 +92,4 @@
         <button *ngIf="isAddressValid" class="sonic-button submit-button" (click)="submitWithdraw()">WITHDRAW</button>
     </div>
     <div class="overlay" #overlay (click)="closeKeyboard()"></div>
-
-
 </body>
