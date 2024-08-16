@@ -186,7 +186,7 @@
                 <h2 class="nft-purchase-title">Invoice #{{ paymentId }}</h2>
                 <p class="nft-purchase-timer">Time to pay: {{ timeToPayFormatted }}</p>
                 <div class="nft-purchase-amount">
-                    <span>Amount to send: {{ pay_amount }} {{ selectedCurrency }}</span>
+                    <span>Amount to send: {{ pay_amount | number:'1.2-2' }} {{ selectedCurrency }}</span>
                     <i class="copy-icon" (click)="copyToClipboard(pay_amount + '')">
                         <img src="../../../assets/images/icons/home_referral.png" alt="copy icon" width="16">
                     </i>
