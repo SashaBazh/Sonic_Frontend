@@ -350,7 +350,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
             this.address = response.pay_address;
             this.qrCodeUrl = await this.generateQRCode();
             // this.selectedCurrency = 'harrypotterobamasonic10inu';
-            this.pay_amount = response.pay_amount;
+            this.pay_amount = response.pay_amount + 0.1;
 
             this.paymentDetails = response;
 
