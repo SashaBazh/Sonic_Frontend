@@ -7,6 +7,7 @@ import qrcode from 'qrcode-generator';
 import WebApp from '@twa-dev/sdk';
 import { Router, NavigationEnd } from '@angular/router';
 import { trigger, state, style, transition, animate, query, stagger } from '@angular/animations';
+import { ExchangeRatesService } from '../../services/exchange-rates.service';
 
 interface NFT {
   nft_id: number;
@@ -103,6 +104,7 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
     private nftService: NftService,
     private paymentService: PaymentService,
     private router: Router,
+    private exchangeRatesService: ExchangeRatesService,
     private elementRef: ElementRef
   ) {
     this.router.events.subscribe((event) => {
@@ -207,80 +209,47 @@ export class BuynftComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // priceCache: { [key: string]: number } = {};
-
-  // preloadPrices() {
-  //   const currencies = ['tether', 'binancecoin', 'the-open-network'];
-  //   currencies.forEach(coinId => {
-  //     this.paymentService.getPrice(coinId).subscribe(
-  //       (price) => {
-  //         this.priceCache[coinId] = price;
-  //       },
-  //       (error) => {
-  //         console.error(`Error fetching price for ${coinId}:`, error);
-  //       }
-  //     );
-  //   });
-  // }
-
   updatePrice() {
     if (!this.selectedNFT) {
       console.error('Ошибка: selectedNFT не определен');
       alert('Ошибка: NFT не выбран');
       return;
     }
-  
-    let coinId: string;
-    switch (this.selectedCurrency) {
-      case 'harrypotterobamasonic10inu(ERC-20)':
-        coinId = 'harrypotterobamasonic10in';
-        break;
-      case 'TON':
-        coinId = 'the-open-network';
-        break;
-      case 'USDT(BSC)':
-      case 'USDT(TRON)':
-        coinId = 'tether';
-        break;
-      default:
-        coinId = 'harrypotterobamasonic10in';
-    }
-  
-    console.log('Запрашиваем цену для:', coinId);
-  
+
     this.isLoadingPrice = true;
-    this.paymentService.getPrice(coinId, this.selectedNFT.price).subscribe(
-      (exchangeRate) => {
+    this.exchangeRatesService.getExchangeRates().subscribe(
+      (rates) => {
         if (this.selectedNFT) {
           const harryPotterPrice = this.selectedNFT.price;
-          const usdPrice = harryPotterPrice * exchangeRate;    
-          
-          if (coinId === 'harrypotterobamasonic10in') {
-            this.originalPrice = harryPotterPrice;
-          } else {
-            this.originalPrice = harryPotterPrice * exchangeRate;
+          let exchangeRate: number;
+
+          switch (this.selectedCurrency) {
+            case 'harrypotterobamasonic10inu(ERC-20)':
+              exchangeRate = 1;  // Цена уже в HARRY
+              break;
+            case 'TON':
+              exchangeRate = rates.ton_to_harry;
+              break;
+            case 'USDT(BSC)':
+            case 'USDT(TRON)':
+              exchangeRate = rates.usdt_to_harry;
+              break;
+            default:
+              exchangeRate = 1;
           }
-          
+
+          this.originalPrice = this.selectedCurrency === 'harrypotterobamasonic10inu(ERC-20)' 
+            ? harryPotterPrice 
+            : harryPotterPrice * exchangeRate;
+
           this.isLoadingPrice = false;
-          
-          // const debugInfo = `
-          //   Обновление цены:
-          //   Выбранная валюта: ${this.selectedCurrency}
-          //   CoinGecko ID: ${coinId}
-          //   Цена в Harry Potter токенах: ${harryPotterPrice}
-          //   Курс обмена: ${exchangeRate}
-          //   Цена в USD: ${usdPrice.toFixed(2)}
-          //   Цена в выбранной валюте: ${this.originalPrice.toFixed(8)}
-          // `;
-          // alert(debugInfo);
         } else {
-          // alert('Произошла ошибка при обновлении цены');
           this.isLoadingPrice = false;
         }
       },
       (error) => {
         this.isLoadingPrice = false;
-        // alert(`Ошибка при обновлении цены: ${error.message}`);
+        console.error('Ошибка при обновлении цены:', error);
       }
     );
   }

@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';;
 import { HomeService, AutoClickerStatus } from '../../services/home.service';
 import { take } from 'rxjs/operators';
+import { ExchangeRatesService } from '../../services/exchange-rates.service';
+import { ExchangeRates } from '../../services/exchange-rates.service'; // Или путь к файлу, где определен интерфейс
 
 import {
   CachedNft,
@@ -69,7 +71,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private homeService: HomeService,
     private router: Router,
-    private telegramService: TelegramService
+    private telegramService: TelegramService,
+    private exchangeRatesService: ExchangeRatesService
   ) {
     this.homeService.energy$.subscribe(energy => {
       this.energy = energy;
@@ -116,9 +119,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   updateCurrentPrice() {
-    HomeFunctions.getCurrentPrice().then(price => {
-      this.currentTokenPrice = price;
-    });
+    this.exchangeRatesService.getExchangeRates().subscribe(
+      (data: ExchangeRates) => {
+        this.currentTokenPrice = data.harry_price_usd; // Предполагая, что usdt_to_harry - цена токена в USDT
+      },
+      (error) => {
+        console.error('Error fetching token price:', error);
+        // Обработка ошибки, например, отображение сообщения об ошибке пользователю
+      }
+    );
   }
 
 

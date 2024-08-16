@@ -1,13 +1,14 @@
 import { Component, ElementRef, ViewChild, Renderer2, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
-import { throwError, Subscription } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { throwError, Subscription, Observable } from 'rxjs';
 import { Chart, registerables, ChartType, ChartConfiguration } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import { enUS } from 'date-fns/locale';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { AuthService } from '../../services/auth.service';
 import { TelegramService } from '../../services/telegram.service';
+import { catchError, tap, retry } from 'rxjs/operators';
+import { ExchangeRatesService } from '../../services/exchange-rates.service';
 
 Chart.register(...registerables, zoomPlugin);
 
@@ -17,6 +18,27 @@ interface CustomTimeScale {
     [key: string]: string;
   };
   stepSize?: number;
+}
+
+interface ExchangeRates {
+  harry_price_usd: number;
+  ton_to_harry: number;
+  usdt_to_harry: number;
+  harry_historical: {
+    "1d": HistoricalData;
+    "7d": HistoricalData;
+    "30d": HistoricalData;
+    "90d": HistoricalData;
+    "365d": HistoricalData;
+    max: HistoricalData;
+  };
+  updated_at: string;
+}
+
+interface HistoricalData {
+  prices: number[][];
+  market_caps: number[][];
+  total_volumes: number[][];
 }
 
 @Component({
@@ -40,6 +62,8 @@ export class MybankComponent implements OnInit, OnDestroy {
 
   private resizeListener: (() => void) | null = null;
 
+  harry_price_usd: number | undefined;
+
   withdrawAddress: string = '';
   isAddressValid: boolean = false;
   balance: number = 0;
@@ -56,7 +80,8 @@ export class MybankComponent implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private http: HttpClient,
     private authService: AuthService,
-    private telegramService: TelegramService
+    private telegramService: TelegramService,
+    private exchangeRatesService: ExchangeRatesService
 
   ) {
     this.authService.balance$.subscribe(balance => this.balance = balance);
@@ -75,9 +100,9 @@ export class MybankComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.getBalance();
     this.getReferalBalance();
-    this.fetchChartData('30');
+    this.fetchChartData('7d');
 
-    setInterval(() => {
+    this.updateCacheInterval = setInterval(() => {
       this.updateChartDataCache();
     }, 2 * 60 * 1000);
   }
@@ -87,8 +112,6 @@ export class MybankComponent implements OnInit, OnDestroy {
       this.fetchChartData(range);
     });
   }
-  
-  
 
   adjustCanvasWidth() {
     const container = document.querySelector('.mybank_info_contanier') as HTMLElement;
@@ -116,69 +139,47 @@ export class MybankComponent implements OnInit, OnDestroy {
     );
   }
 
-  private API_KEY = 'CG-4bxNeYA1yhCsz7N2mZsd3LGN';
-
-fetchCurrentPrice() {
-  const apiUrl = `https://pro-api.coingecko.com/api/v3/simple/price?ids=harrypotterobamasonic10in&vs_currencies=usd,btc,eth&include_24hr_change=true&x_cg_pro_api_key=${this.API_KEY}`;
-
-  this.http.get(apiUrl).subscribe(
-    (data: any) => {
-      const coinData = data['harrypotterobamasonic10in'];
-      console.log(coinData);
-    },
-    (error) => {
-      console.error('Ошибка при получении текущей цены:', error);
+  fetchChartData(range: string) {
+    if (this.chartDataCache[range]) {
+      console.log('Using cached chart data for range:', range);
+      this.createChart(this.chartDataCache[range]);
+      return;
     }
-  );
-}
 
-fetchChartData(range: string) {
-  if (this.chartDataCache[range]) {
-    console.log('Использование кэшированных данных для диапазона:', range);
-    this.createChart(this.chartDataCache[range]);
-    return;
+    this.exchangeRatesService.getExchangeRates().subscribe(
+      (data: ExchangeRates) => {
+        const chartData = this.processHistoricalData(data.harry_historical, range);
+        this.chartDataCache[range] = chartData;
+        this.createChart(chartData);
+      },
+      (error) => {
+        console.error('Error fetching chart data:', error);
+      }
+    );
   }
-   
-  let interval: string;
-  let days: string = range
-   
-  switch (range) {
-    case '1':
-    case '7':
-      interval = 'daily';
-      break;
-    case '30':
-    case '90':
-    case '365':
-    case 'max':
-    default:
-      interval = 'daily';
-  }
-   
-  const apiUrl = `https://pro-api.coingecko.com/api/v3/coins/harrypotterobamasonic10in/market_chart?vs_currency=usd&days=${days}&interval=${interval}`;
-  const headers = new HttpHeaders().set('x-cg-pro-api-key', this.API_KEY);
-  this.chartDataSubscription?.unsubscribe();
-   
-  this.chartDataSubscription = this.http.get(apiUrl, { headers }).pipe(
-    catchError(error => {
-      console.error('Не удалось получить данные:', error);
-      return throwError(() => new Error('Не удалось получить данные'));
-    })
-  ).subscribe(
-    (data: any) => {
-      // Сохраняем данные в кэш
-      this.chartDataCache[range] = data;
-      this.createChart(data);
-    },
-    (error) => {
-      console.error('Ошибка при получении данных для графика:', error);
+
+  private processHistoricalData(historicalData: ExchangeRates['harry_historical'], range: string) {
+    if (!(range in historicalData)) {
+      console.warn('Range not found in historical data:', range);
+      return { prices: [], total_volumes: [] };
     }
-  );
-}
+
+    const rangeData = historicalData[range as keyof ExchangeRates['harry_historical']];
+
+    if (!rangeData || !rangeData.prices || !rangeData.total_volumes) {
+      console.warn('Invalid data for range:', range);
+      return { prices: [], total_volumes: [] };
+    }
+
+    return {
+      prices: rangeData.prices,
+      total_volumes: rangeData.total_volumes
+    };
+  }
 
   clearChartDataCache() {
     this.chartDataCache = {};
-    console.log('Кэш данных графика очищен');
+    console.log('Chart data cache cleared');
   }
 
   getXAxisSettings(labels: Date[]): { time: CustomTimeScale } {
@@ -420,7 +421,11 @@ fetchChartData(range: string) {
         };
 
         this.chart = new Chart(ctx, config);
+      } else {
+        console.error('Failed to get canvas context');
       }
+    } else {
+      console.error('Cannot create chart. Invalid data or missing canvas.');
     }
   }
 
@@ -460,8 +465,6 @@ fetchChartData(range: string) {
   }
 
   submitWithdraw() {
-    // alert(this.withdrawAmount);
-    // alert(this.referralBalance);
     if (this.withdrawAmount <= this.referralBalance) {
       const withdrawData = {
         payment_system: this.paymentSystem,
@@ -470,7 +473,6 @@ fetchChartData(range: string) {
       };
 
       if (this.telegramService.isTelegramWebAppAvailable()) {
-        // alert("Зашло2");
         this.telegramService.showAlert('Expect payment within 24 hours while we review your transaction');
         this.closeModal();
       } else {
@@ -478,11 +480,11 @@ fetchChartData(range: string) {
       }
 
       this.authService.withdrawFunds(withdrawData).subscribe(
-        (response) => {
+        () => {
           this.getReferalBalance();
-          // alert("Зашло");
         },
         (error) => {
+          console.error('Error withdrawing funds:', error);
         }
       );
     }
